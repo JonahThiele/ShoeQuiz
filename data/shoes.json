@@ -1,0 +1,153 @@
+
+{
+    "Neutral" : [
+        {
+            "name" : "Clifton",
+            "brand" : "Hoka",
+            "drop" : 5,
+            "stack" : 32.7
+        },
+        {
+            "name" : "Glycerin",
+            "brand" : "Brooks",
+            "drop" : 10.6,
+            "stack" : 37.2
+        },
+        {
+            "name" : "1080",
+            "brand" : "New Balance",
+            "drop" : 4.2,
+            "stack" : 37.0
+        },
+        {
+            "name" : "880",
+            "brand" : "New Balance",
+            "drop" : 8,
+            "stack" : 33.0
+        },
+        {
+            "name" : "NovaBlast",
+            "brand" : "Asics",
+            "drop" : 7.4,
+            "stack" : 40.9
+        },
+        {
+            "name" : "GlideRide",
+            "brand" : "Asics",
+            "drop" : 11.1,
+            "stack" : 42.7
+        },
+        {
+            "name" : "Pegasus",
+            "brand" : "Nike",
+            "drop" : 11.4,
+            "stack" : 33.6
+        }
+    ],
+    "Stability" : [
+        {
+            "name" : "Arani",
+            "brand" : "Hoka",
+            "drop" : 6.3,
+            "stack" : 34.2
+        },
+        {
+            "name" : "Glycerin GTS",
+            "brand" : "Brooks",
+            "drop" : 10.7,
+            "stack" : 37.2
+        },
+        {
+            "name" : "860",
+            "brand" : "New Balance",
+            "drop" : 9.3,
+            "stack" : 36.8
+        },
+        {
+            "name" : "Adrenaline GTS",
+            "brand" : "Brooks",
+            "drop" : 12.6,
+            "stack" : 34.1
+        },
+        {
+            "name" : "Kayano",
+            "brand" : "Asics",
+            "drop" : 11.5,
+            "stack" : 39.3
+        },
+        {
+            "name" : "Structure",
+            "brand" : "Nike",
+            "drop" : 12.1,
+            "stack" : 36.7
+        }
+    ],
+    "Max Cushion" : [
+        {
+            "name" : "Glycerin Max",
+            "brand" : "Brooks",
+            "drop" : 6.6,
+            "stack" : 42.3
+        },
+        {
+            "name" : "Nimbus",
+            "brand" :"Asics",
+            "drop" : 8.4,
+            "stack" : 40.4
+        },
+        {
+            "name" : "SuperComp Trainer",
+            "brand" : "New Balance",
+            "drop" : 7.3,
+            "stack" : 36.8
+        },
+        {
+            "name" : "Vomero",
+            "brand" : "Nike",
+            "drop" : 7.7,
+            "stack" : 33.9
+        },
+        {
+            "name" : "Bondi",
+            "brand" : "Hoka",
+            "drop" : 9.1,
+            "stack" : 41.3
+        }
+    ],
+    "Speed" : [
+        {
+            "name" : "Mach 6",
+            "brand" : "Hoka",
+            "drop" : 9.6,
+            "stack" : 36
+        },
+        {
+            "name" : "Rebel",
+            "brand" :"New Balance",
+            "drop" : 6.5,
+            "stack" : 28.0
+        },
+        {
+            "name" : "Hyperion Tempo",
+            "brand" : "Brooks",
+            "drop" : 9.0,
+            "stack" : 28.7
+        },
+        {
+            "name" : "Pegasus Turbo",
+            "brand" : "Nike",
+            "drop" : 10.0,
+            "stack" : 32.0
+        },
+        {
+            "name" : "Endorphin Speed",
+            "brand" : "Saucony",
+            "drop" : 8.7,
+            "stack" : 36.2
+        }
+    ],
+    "Race Day" : [
+        
+    ]
+    
+}
