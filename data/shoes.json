@@ -147,7 +147,54 @@
         }
     ],
     "Race Day" : [
-        
+        {
+            "name": "Endorphin Elite",
+            "brand": "Saucony",
+            "drop": 8.0,
+            "stack": 39.9
+        },
+        {
+            "name": "Endorphin Pro",
+            "brand": "Saucony",
+            "drop": 9.5,
+            "stack": 38.1
+        },
+        {
+            "name": "Vaporfly",
+            "brand": "Nike",
+            "drop": 11.1,
+            "stack": 37.1
+        },
+        {
+            "name": "Alphafly",
+            "brand": "Nike",
+            "drop": 8.5,
+            "stack": 38.1
+        },
+        {
+            "name": "Metaspeed Sky",
+            "brand": "Asics",
+            "drop": 2.5,
+            "stack": 33.7
+        },
+        {
+            "name": "Metaspeed Edge",
+            "brand": "Asics",
+            "drop": 8.0,
+            "stack": 31.6
+        },
+        {
+            "name": "SuperComp Elite",
+            "brand": "New Balance",
+            "drop": 9.3,
+            "stack": 28.9
+        },
+        {
+            "name": "Cielo",
+            "brand": "Hoka",
+            "drop": 9.5,
+            "stack": 39.8
+        }
     ]
     
 }
