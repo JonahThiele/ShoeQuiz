@@ -1,11 +1,11 @@
 {# This is the standard question template so that all we have to do is add a question and some answers into a config and rerun the code#}
 <html>
 <head>
-    <title>Question {{ question_number}}</title>
+    <title>Question {{ question.question_number}}</title>
 </head>
 <body>
-    <h1>Question {{ question_number }}</h1>
-    <h6>{{ question.question }}</h6>
+    <h1>Question {{ question.question_number }}</h1>
+    <h6>{{ question.text }}</h6>
     <form>
     {% if question.type == "single" %}
         {% for answer in question.answers %}

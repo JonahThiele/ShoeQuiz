@@ -1,0 +1,63 @@
+{
+    "number_of_question": 9,
+    "questions": [
+        {
+            "text": "What type of running shoe are you looking for?",
+            "type": "single",
+            "answers" : [
+                {"id": "a1", "text": "Stability"},
+                {"id": "a2", "text": "Neutral"},
+                {"id": "a3", "text": "Max Cushion"},
+                {"id": "a4", "text": "Racing"}
+            ]
+        },
+        {
+            "text": "Do you run frequently in temperatures less than 32 degrres?",
+            "type": "single",
+            "answers" : [
+                {"id" : "a1", "text": "Yes"},
+                {"id" : "a2", "text": "No"}
+            ]
+        },
+        {
+            "text": "Do you suffer from any of the following running related issues?",
+            "type": "mulitple",
+            "answers": [
+                {"id" : "a1", "text": "ingrown toenails"},
+                {"id" : "a2", "text": "morton's neuroma"},
+                {"id" : "a3", "text": "black toenails"},
+                {"id" : "a4", "text": "netaersagn"},
+                {"id" : "a5", "text": "hallux rigidus"},
+                {"id" : "a6", "text": "bunions"},
+                {"id" : "a7", "text": "pinky toe blisers"},
+                {"id" : "a8", "text": "big toe blisters"},
+                {"id" : "a9", "text": "lace bite"},
+                {"id" : "a10", "text": "achilles tendonitis"},
+                {"id" : "a11", "text": "hunglunds's deformity"},
+                {"id" : "a12", "text": "plantear faciitis"},
+                {"id" : "a13", "text": "blisters and bruises on heel"},
+                {"id" : "a14", "text": "chronic heel pain"}
+            ]
+        },
+        {
+            "text": "What seasons are you looking to run in the shoe?",
+            "type": "mulitple",
+            "answers":[
+                {"id": "a1", "text": "summer"},
+                {"id": "a2", "text": "fall"},
+                {"id": "a3", "text": "winter"},
+                {"id": "a4", "text": "spring"}
+            ]
+        },
+        {
+            "text": "How often are you going to be running at night?",
+            "type": "single",
+            "answers": [
+                {"id": "a1", "text": "often"},
+                {"id": "a2", "text": "sometimes"},
+                {"id": "a3", "text": "never"}
+            ]
+        }
+    ]
+
+}

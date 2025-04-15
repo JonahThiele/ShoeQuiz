@@ -13,8 +13,6 @@ int main()
     CROW_ROUTE(app, "/")([&](const crow::request& req){
         //set some vars in the inja template via json
         inja::json vars;
-        vars["title"] = "Inja + Crow";
-        vars["message"] = "Hello, welcome to Crow + Inja!";
 
         //load the template from a file
         //remember this is going to be running from the build dir
