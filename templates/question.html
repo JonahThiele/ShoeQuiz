@@ -1,0 +1,26 @@
+{# This is the standard question template so that all we have to do is add a question and some answers into a config and rerun the code#}
+<html>
+<head>
+    <title>Question {{ question_number}}</title>
+</head>
+<body>
+    <h1>Question {{ question_number }}</h1>
+    <h6>{{ question.question }}</h6>
+    <form>
+    {% if question.type == "single" %}
+        {% for answer in question.answers %}
+            <label for="{{ answer.id }}">{{ answer.text }}</label>
+            <input type="radio" id="{{ answer.id }}" name="{{ answer.id }}">
+        {% endfor %}
+    
+     {# This is for the mulitple responses #}   
+    {% else %}
+        {% for answer in question.answers %}
+            <label for="{{ answer.id }}">{{ answer.text }}</label>
+            <input type="checkbox" id="{{ answer.id }}" name="{{ answer.id }}">
+        {% endfor %}
+    {% endif %}
+    <input type="submit" value="{% if question_number < questions %}Next{% else %}To Results{% endif %}">
+    </form>
+</body>
+</html>
