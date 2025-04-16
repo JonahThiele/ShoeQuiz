@@ -1,12 +1,22 @@
 #include <string>
+#include <map>
 
+//these were the only size 
 enum Size {
-    "True to size",
-    "Slightly small",
-    "Slightly large",
-    "Half size small",
-    "Half size large"
-}
+    TRUE_TO_SIZE,
+    SLIGHTLY_SMALL,
+    SLIGHTLY_LARGE,
+    HALF_SIZE_SMALL,
+    HALF_SIZE_LARGE
+};
+
+std::map<std::string, Size> SizeLabels = {
+    {"True to size", TRUE_TO_SIZE},
+    {"Slightly small", SLIGHTLY_SMALL},
+    {"Slightly large", SLIGHTLY_LARGE},
+    {"Half size small", HALF_SIZE_SMALL},
+    {"Half size large", HALF_SIZE_LARGE}
+};
 
 //this is mainly a data class to hold the shoe attributes for search
 class Shoe {
@@ -61,13 +71,13 @@ class Shoe {
         Shoe(std::string name, float heel_stack, float forefoot_stack, 
             float midsole_softness, float midsole_softness_cold, 
             float midsole_softness_cold_per, float insole_thickness, 
-            enum Size size, float toebox_width_widest_prt, 
+            std::string size, float toebox_width_widest_prt, 
             float toebox_width_big_toe, float toebox_height, int torsional_rigidity,
             int heel_counter_stiffness, float midsole_width_forefoot,
             float midesole_width_heel, float flexibility,
             float stiffness_in_cold, float stiffness_in_cold_per,
             float weight,int breathability,int toebox_durability,
-            float outsole_hardness,float outsole_thickness
+            float outsole_hardness,float outsole_thickness,
             int price, bool reflective_elements,
             float tongue_padding, bool heel_tab,
             bool removable_insole )
@@ -76,11 +86,11 @@ class Shoe {
                 this->name = name;
                 this->heel_stack = heel_stack;
                 this->forefoot_stack = forefoot_stack;
-                this-> midsole_softness = midsole_softness;
+                this->midsole_softness = midsole_softness;
                 this->midsole_softness_cold = midsole_softness_cold;
                 this->midsole_softness_cold_per = midsole_softness_cold_per;
                 this->insole_thickness = insole_thickness;
-                this->size = size;
+                this->size = SizeLabels[size];
                 this->toebox_width_widest_prt = toebox_width_widest_prt;
                 this->toebox_width_big_toe = toebox_width_big_toe;
                 this->toebox_height = toebox_height;
@@ -100,6 +110,6 @@ class Shoe {
                 this->reflective_elements = reflective_elements;
                 this->tongue_padding = tongue_padding;
                 this->heel_tab = heel_tab;
-                this-> removable_insole = removable_insole;
+                this->removable_insole = removable_insole;
             }
 };
