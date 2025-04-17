@@ -1,0 +1,12 @@
+{
+    "text" : "What is the range of price you are looking for?",
+    "type" : "single",
+    "question_number": 6,
+    "questions": 10,
+    "answers" : [
+        {"id": "a1", "text": "<$100"},
+        {"id": "a2", "text": "<$150"},
+        {"id": "a3", "text": "<$200"},
+        {"id": "a4", "text": "<$250"}
+    ] 
+}

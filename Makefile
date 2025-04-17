@@ -1,7 +1,7 @@
 #we should really consider changing this over to a cmake file
 
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall
+CXXFLAGS = -std=c++17 -Wall -g
 
 TARGET = ShoeSeeker
 
@@ -21,7 +21,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(BUILD_DIR) $(TARGET)
+	rm $(BUILD_DIR)$(TARGET)
 
 .PHONY: all clean
 

@@ -1,0 +1,12 @@
+{
+    "text": "What type of running shoe are you looking for?",
+    "type": "single",
+    "question_number" : 1,
+    "questions" : 10,
+    "answers" : [
+        {"id": "a1", "text": "Stability"},
+        {"id": "a2", "text": "Neutral"},
+        {"id": "a3", "text": "Max Cushion"},
+        {"id": "a4", "text": "Racing"}
+    ]
+}
