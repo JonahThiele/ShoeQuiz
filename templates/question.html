@@ -6,7 +6,7 @@
 <body>
     <h1>Question {{ question_number }}</h1>
     <h6>{{ text }}</h6>
-    <form>
+    <form action="http://localhost:18080/store" method="POST">
     {% if type == "single" %}
         {% for answer in answers %}
             <label for="{{ answer.id }}">{{ answer.text }}</label>
@@ -22,6 +22,7 @@
             <input type="checkbox" id="{{ answer.id }}" name="{{ question_number }}">
         {% endfor %}
     {% endif %}
+    <input type="hidden" value="{{ question_number }}" name="question_num">
     <input type="submit" value="{% if question_number < questions %}Next{% else %}To Results{% endif %}">
     </form>
 </body>
