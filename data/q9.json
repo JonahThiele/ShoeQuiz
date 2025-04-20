@@ -4,7 +4,7 @@
     "question_number": 9,
     "questions": 10,
     "answers":[
-        {"id": "a1", "text": "softer shoe"},
-        {"id": "a2", "text": "faster stiffer shoe"}
+        {"id": "a1", "text": "softer shoe", "metrics":"Flexibility / Stiffness (new method),Midsole softness", "values":"15.2,12"},
+        {"id": "a2", "text": "faster stiffer shoe", "metrics":"Flexibility / Stiffness (new method),Weight,Torsional rigidity", "values":"15,7.25,5"}
     ]
 }

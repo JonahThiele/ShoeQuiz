@@ -4,7 +4,7 @@
     "question_number": 3,
     "questions": 10,
     "answers": [
-        {"id" : "a1", "text": "ingrown toenails"},
+        {"id" : "a1", "text": "ingrown toenails", "metrics":""},
         {"id" : "a2", "text": "morton's neuroma"},
         {"id" : "a3", "text": "black toenails"},
         {"id" : "a4", "text": "netaersagn"},

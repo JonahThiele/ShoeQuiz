@@ -4,8 +4,8 @@
     "question_number": 5,
     "questions": 10,  
     "answers": [
-        {"id": "a1", "text": "often"},
-        {"id": "a2", "text": "sometimes"},
-        {"id": "a3", "text": "never"}
+        {"id": "a1", "text": "often", "metrics":"Reflective elements", "values":"Yes"},
+        {"id": "a2", "text": "sometimes", "metrics":"Reflective elements", "values":"Yes"},
+        {"id": "a3", "text": "never", "metrices":"Reflective elements", "values":"No"}
     ]
 }

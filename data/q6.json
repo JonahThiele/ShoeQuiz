@@ -4,9 +4,9 @@
     "question_number": 6,
     "questions": 10,
     "answers" : [
-        {"id": "a1", "text": "<$100"},
-        {"id": "a2", "text": "<$150"},
-        {"id": "a3", "text": "<$200"},
-        {"id": "a4", "text": "<$250"}
+        {"id": "a1", "text": "~$100", "metrics":"Price", "values":"100"},
+        {"id": "a2", "text": "~$150", "metrics":"Price", "values":"150"},
+        {"id": "a3", "text": "~$200", "metrics":"Price", "values":"200"},
+        {"id": "a4", "text": "~$250", "metrics":"Price", "values":"250"}
     ] 
 }

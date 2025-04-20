@@ -4,9 +4,9 @@
     "question_number": 4,
     "questions": 10,
     "answers":[
-        {"id": "a1", "text": "summer"},
-        {"id": "a2", "text": "fall"},
-        {"id": "a3", "text": "winter"},
-        {"id": "a4", "text": "spring"}
+        {"id": "a1", "text": "summer", "metrics":"Breathability", "values":"5"},
+        {"id": "a2", "text": "fall", "metrics":"Breathability", "values":"3"},
+        {"id": "a3", "text": "winter", "metrices":"Breathability", "values":"2"},
+        {"id": "a4", "text": "spring", "metrices":"Breathability", "values":"3"}
     ]
 }

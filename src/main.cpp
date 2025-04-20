@@ -1,8 +1,10 @@
 #include "crow.h"
+#include "crow/middlewares/session.h"
 //this might need to be changed for cmake builds
 #include "../includes/inja.hpp"
 #include <fstream>
 #include <iostream>
+#include "shoe.hpp"
 
 //some annoying gets from the query string request 
 #include <bits/stdc++.h>
@@ -20,7 +22,14 @@ crow::response render_question(inja::json &vars, inja::Environment &env, std::st
 
 int main()
 {
-    crow::SimpleApp app; //define your crow application
+
+    //define app to handle all the session data
+    crow::App<crow::CookieParser, crow::SessionMiddleware<crow::FileStore>> app{crow::SessionMiddleware<crow::FileStore>{
+        crow::FileStore{"/tmp/sessiondata"}
+    }};
+
+    //set up a session to handle the questions storing the results
+    
 
     inja::Environment env;
     inja::json vars;
@@ -34,6 +43,7 @@ int main()
     });
 
     //end points for all the various questions this was about as clean as I could get it
+    //make these endpoints somehow dynamically
     CROW_ROUTE(app, "/q1")([&]{
         return render_question(vars, env, "../data/q1.json");
     });
@@ -67,7 +77,13 @@ int main()
         return render_question(vars, env, "../data/q9.json");
     });
 
-    CROW_ROUTE(app, "/store").methods(crow::HTTPMethod::POST)([](const crow::request &req){
+    CROW_ROUTE(app, "/store").methods(crow::HTTPMethod::POST)([&](const crow::request &req){
+
+        //get the session data
+        auto& session = app.get_context<crow::SessionMiddleware<crow::FileStore>>(req);
+
+        //return the amount of answers and map them to the shoe class
+
         auto body = req.get_body_params();
         //std::cout << body.get("question_num");
         long int q = std::strtol(body.get("question_num"),NULL, 10);

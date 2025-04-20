@@ -4,7 +4,7 @@
     "question_number": 2,
     "questions": 10,
     "answers" : [
-        {"id" : "a1", "text": "Yes"},
-        {"id" : "a2", "text": "No"}
+        {"id" : "a1", "text": "Yes", "metrics":"Stiffness in cold (%),Midsole softness in cold (%)", "values": "25,25"},
+        {"id" : "a2", "text": "No", "metrics":"Stiffness in cold (%),Midsole softness in cold (%)", "values":"50,50"}
     ]
 }

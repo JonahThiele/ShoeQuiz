@@ -4,9 +4,9 @@
     "question_number" : 1,
     "questions" : 10,
     "answers" : [
-        {"id": "a1", "text": "Stability"},
-        {"id": "a2", "text": "Neutral"},
-        {"id": "a3", "text": "Max Cushion"},
-        {"id": "a4", "text": "Racing"}
+        {"id": "a1", "text": "Stability", "metrics": "Midsole width - forefoot,Midsole width - heel,Heel counter stiffness,Torsional rigidity", "value": "115.5,94,4.5,4.5"},
+        {"id": "a2", "text": "Neutral", "metrics": "Flexibility / Stiffness (new method)", "value": "12.5"},
+        {"id": "a3", "text": "Max Cushion", "metrics": "Heel stack,Drop,Midsole softness", "value":"35,9.5,15.5"},
+        {"id": "a4", "text": "Racing", "metrics": "Weight,Torsional rigidity,Flexibility / Stiffness (new method),Midsole width - forefoot,Midsole width - heel", "values":"7,4,18.5,110.5,78.5"}
     ]
 }
