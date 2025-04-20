@@ -4,19 +4,19 @@
     "question_number": 3,
     "questions": 10,
     "answers": [
-        {"id" : "a1", "text": "ingrown toenails", "metrics":""},
-        {"id" : "a2", "text": "morton's neuroma"},
-        {"id" : "a3", "text": "black toenails"},
-        {"id" : "a4", "text": "netaersagn"},
-        {"id" : "a5", "text": "hallux rigidus"},
-        {"id" : "a6", "text": "bunions"},
-        {"id" : "a7", "text": "pinky toe blisers"},
-        {"id" : "a8", "text": "big toe blisters"},
-        {"id" : "a9", "text": "lace bite"},
-        {"id" : "a10", "text": "achilles tendonitis"},
-        {"id" : "a11", "text": "hunglunds's deformity"},
-        {"id" : "a12", "text": "plantear faciitis"},
-        {"id" : "a13", "text": "blisters and bruises on heel"},
-        {"id" : "a14", "text": "chronic heel pain"}
+        {"id" : "a1", "text": "ingrown toenails", "metrics":"Toebox width - big toe (new method),Toebox width - widest part (new method)", "values":"99.5,75"},
+        {"id" : "a2", "text": "morton's neuroma", "metrics":"Toebox width - big toe (new method),Toebox width - widest part (new method),Drop", "values":"99.5,75,5"},
+        {"id" : "a3", "text": "black toenails", "metrics":"Size,Toebox width - big toe (new method),Toebox width - widest part (new method)", "values":"Slightly large,99.5,75.5"},
+        {"id" : "a4", "text": "netaersagn", "metrics":"Removable insole,Midsole softness", "values":"Yes,19"},
+        {"id" : "a5", "text": "hallux rigidus", "metrics":"Toebox width - big toe (new method),Toebox width - widest part (new method)", "values":"99.5,75"},
+        {"id" : "a6", "text": "bunions", "metrics":"Toebox width - big toe (new method), Toebox width - widest part (new method)", "values":"99.5,75"},
+        {"id" : "a7", "text": "pinky toe blisers", "metrics":"Toebox width - widest part (new method)", "values":"75"},
+        {"id" : "a8", "text": "big toe blisters", "metrics":"Toebox width - bigtoe (new method)", "values":"99.5"},
+        {"id" : "a9", "text": "lace bite", "metrics":"Tongue padding", "values":"2"},
+        {"id" : "a10", "text": "achilles tendonitis", "metrics":"Heel counter stiffness,Drop", "values":"2.5,10"},
+        {"id" : "a11", "text": "hunglunds's deformity", "metrics":"Heel counter stiffness", "values":"1.5"},
+        {"id" : "a12", "text": "plantear faciitis", "metrics":"Heel counter stiffness,Flexibility / Stiffness (new method)", "values":"3.7,20"},
+        {"id" : "a13", "text": "blisters and bruises on heel", "metrics":"Heel counter stiffness,Flexibility / Stiffness (new method),Insole thickness", "values":"3.7,10,5"},
+        {"id" : "a14", "text": "chronic heel pain", "metrics":"Midsole softness,Insole thickness", "values":"10,10"}
     ]
 }
