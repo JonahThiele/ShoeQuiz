@@ -1,7 +1,8 @@
 #we should really consider changing this over to a cmake file
 
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -g
+#needs c++20 because I don't know the value for a parameter list and needed to pass an auto type
+CXXFLAGS = -std=c++20 -Wall -g
 
 TARGET = ShoeSeeker
 

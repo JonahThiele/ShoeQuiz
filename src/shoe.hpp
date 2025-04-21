@@ -1,7 +1,7 @@
 #include <string>
 #include <map>
 
-//these were the only size 
+//these were the only sizes I saw after briefly skimming the file 
 enum Size {
     TRUE_TO_SIZE,
     SLIGHTLY_SMALL,

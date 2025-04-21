@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Question {{ question_number}}</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>Question {{ question_number }}</h1>
@@ -9,9 +10,9 @@
     <form action="http://localhost:18080/store" method="POST">
     {% if type == "single" %}
         {% for answer in answers %}
-            <label for="{{ answer.id }}">{{ answer.text }}</label>
+            <label for="{{ answer.metrics }}">{{ answer.text }}</label>
             <!-- we should use another field instead of the question number -->
-            <input type="radio" id="{{ answer.id }}" name="{{ question_number }}">
+            <input type="radio" id="{{ answer.id }}" name="q{{ question_number }}" value="{{ answer.metrics }}:{{ answer.values }}">
         {% endfor %}
     
      {# This is for the mulitple responses #}   
@@ -19,7 +20,7 @@
         {% for answer in answers %}
             <label for="{{ answer.id }}">{{ answer.text }}</label>
             <!-- again we should be using another field instead of the question number-->
-            <input type="checkbox" id="{{ answer.id }}" name="{{ question_number }}">
+            <input type="checkbox" id="{{ answer.id }}" name="{{ question_number }}" value="{{ answer.metrics }}:{{ answer.values }}">
         {% endfor %}
     {% endif %}
     <input type="hidden" value="{{ question_number }}" name="question_num">

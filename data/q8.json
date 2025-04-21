@@ -4,8 +4,8 @@
     "question_number":8,
     "questions": 10,
     "answers": [
-        {"id": "a1", "text": "outer edge"},
-        {"id": "a2", "text": "inner edge"},
-        {"id": "a3", "text": "middle of shoe"}
+        {"id": "a1", "text": "outer edge", "metrics":"Pronation", "values":"Supination"},
+        {"id": "a2", "text": "inner edge", "metrics":"Pronation", "values":"Overpronation"},
+        {"id": "a3", "text": "middle of shoe", "metrics":"Pronation", "values":"Neutral"}
     ]
 }
