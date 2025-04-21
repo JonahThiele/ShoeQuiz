@@ -101,6 +101,13 @@ int main()
         return crow::response{result};
     });
 
+    //create some route to serve the css, we should make this more clean and extendable later
+    CROW_ROUTE(app, "/static/style.css")([&]{
+        inja::Template temp = env.parse_template("../templates/style.css");
+        std::string result = env.render(temp, vars);
+        return crow::response{result};
+    });
+
     //end points for all the various questions this was about as clean as I could get it
     //make these endpoints somehow dynamically
     CROW_ROUTE(app, "/q1")([&]{
