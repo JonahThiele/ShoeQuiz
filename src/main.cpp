@@ -145,6 +145,7 @@ int main()
 
     CROW_ROUTE(app, "/store").methods(crow::HTTPMethod::POST)([&](const crow::request &req){
 
+        app.get_context<Session>(req).set("username", "test_user");
         //get the session data
         auto& session = app.get_context<Session>(req);
 
