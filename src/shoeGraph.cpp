@@ -1,4 +1,5 @@
 #include "shoeGraph.hpp"
+#include "shoe.hpp"
 #include <fstream>
 #include <iostream>
 #include "../includes/json.hpp"
@@ -17,7 +18,7 @@ float convert_to_number(std::string str)
         }
     }
     if(end_str){
-        return std::stof(str.subtr(0,1+end_str));
+        return std::stof(str.substr(0,1+end_str));
     }
     //return -1 on an error because you will only have positive values anyway
     return -1;
@@ -33,11 +34,16 @@ std::vector<std::string> convert_to_list(std::string str, char limit)
     while(std::getline(ss, el, limit))
     {
         //trim the strings
-        el.erase(value.begin(), std::find_if(el.begin(), el.end(), std::bind1st(std::not_equal_to<char>(), ' ')));
+        el.erase(el.begin(), std::find_if(el.begin(), el.end(), std::bind1st(std::not_equal_to<char>(), ' ')));
         el.erase(std::find_if(el.rbegin(), el.rend(), std::bind1st(std::not_equal_to<char>(), ' ')).base(), el.end());
         l.push_back(el);
     }
     return l;
+}
+
+void shoeGraph::add_on_attribute(std::string attribute)
+{
+
 }
 
 ShoeGraph::ShoeGraph(std::string filename){
@@ -45,7 +51,7 @@ ShoeGraph::ShoeGraph(std::string filename){
     std::ifstream file(filename);
     if(!file.is_open()){
         //file is not found etc
-        std::cerr << "File could not be opened"
+        std::cerr << "File could not be opened";
         return;
     }
 
@@ -63,7 +69,7 @@ ShoeGraph::ShoeGraph(std::string filename){
         std::string collection = jshoe["Collection:"];
         //this is going to have a more indepth parsing setup
         std::string weight = jshoe["Weight:"]; //"Men:  8.6 oz / 244g  | Women:  7.6 oz / 216g",
-        float drop = convert_to_number(jshoe["Drop:"]);
+        //float drop = convert_to_number(jshoe["Drop:"]);
         std::vector<std::string> pronation = convert_to_list(jshoe["Pronation:"], '|'); // "Neutral Pronation  |  Supination  |  Underpronation",
         std::string arch_type = jshoe["Arch type:"];
         std::vector<std::string> material = convert_to_list(jshoe["Material:"], '|'); // "Mesh  |  Reflective",
@@ -74,7 +80,7 @@ ShoeGraph::ShoeGraph(std::string filename){
         std::vector<std::string> type = convert_to_list(jshoe["Type:"], '|'); // "Maximalist  |  Lightweight",
         //"Widths available:": "Normal", this is too involved to figure out for the 1st iteration, maybe later
         std::vector<std::string> pace = convert_to_list(jshoe["Pace:"], ','); // "Tempo, Competition",
-        std::vector<std::string> distance = convert_to_list(jshoe["Race distance:"]); // "Marathon  |  Half marathon",
+        std::vector<std::string> distance = convert_to_list(jshoe["Race distance:"], "|"); // "Marathon  |  Half marathon",
         // I dont think these are important at all so Im going to disregard them for now"SKUs:": "FN8454002 ,  FN8454104 ,  FN8454601 ,  FN8455001 ,  FN8455101 ,  FN8455102 ,  FN8455701 ,  HQ1718400 ,  HQ3498100 ,  HV4366072",
         float heel_stack = convert_to_number(jshoe["Heel stack"]);
         float forefoot_stack = convert_to_number(jshoe["Forefoot stack"]);
@@ -105,11 +111,30 @@ ShoeGraph::ShoeGraph(std::string filename){
         float outsole_durability = convert_to_number(jshoe["Outsole durability"]);
         float outsole_thickness = convert_to_number(jshoe["Outsole thickness"]);
         //we need to create a customer one for this "Price": "$170",
-        //we need to create a special parse for this too "Reflective elements": "Yes",
+        std::string price_str = jshoe["Price"];
+        price_str.erase(0,1);
+        float price = convert_to_number(price_str);
+        bool reflective_elements = (jshoe["Reflective elements"] == "Yes") ? true : false;
         float tongue_padding = convert_to_number(jshoe["Tongue padding"]);
         // probaly disregard this as well "Tongue: gusset type": "Both sides (semi)",
-        // we need to create a special parse for this "Heel tab": "None",
-        // we need to create a special parse for this "Removable insole": "Yes"
+        bool heel_tab = (jshoe["Heel tab"] == "None")? false : true;
+        bool removable_insole = (jshoe["Removeable insole"] == "Yes") ? true : false;
+        
+        Shoe shoe = Shoe(name, heel_stack, forefoot_stack, 
+            midsole_softness, midsole_softness_in_cold, 
+            midsole_softness_in_cold_per, insole_thickness, 
+            size, toebox_width_widest_prt, 
+            toebox_width_big_toe, toebox_height, torsional_rigidity,
+            heel_counter_stiffness, midsole_width_forefoot,
+            midesole_width_heel, flexibility,
+            stiffness_in_cold, stiffness_in_cold_per,
+            weight, breathability, toebox_durability,
+            outsole_hardness, outsole_thickness,
+            price, reflective_elements,
+            tongue_padding, heel_tab,
+            removable_insole );
+        
+        
     }
 
 

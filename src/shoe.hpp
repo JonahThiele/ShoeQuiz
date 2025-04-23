@@ -1,5 +1,6 @@
 #include <string>
 #include <map>
+#pragma once
 
 //these were the only sizes I saw after briefly skimming the file 
 enum Size {

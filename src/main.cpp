@@ -69,7 +69,11 @@ int main()
     //define app to handle all the session data
     using Session = crow::SessionMiddleware<crow::InMemoryStore>;
     crow::App<crow::CookieParser, Session> app{Session{
-        crow::CookieParser::Cookie("session").max_age(/*one day*/ 24 * 60 * 60).path("/"),
+        crow::CookieParser::Cookie("session")
+            .max_age(/*one day*/ 24 * 60 * 60)
+            .path("/")
+            .httponly(),
+
         4,
         crow::InMemoryStore{}
     }};
@@ -144,10 +148,9 @@ int main()
     });
 
     CROW_ROUTE(app, "/store").methods(crow::HTTPMethod::POST)([&](const crow::request &req){
-
-        app.get_context<Session>(req).set("username", "test_user");
         //get the session data
         auto& session = app.get_context<Session>(req);
+        session.set("init", "true");
 
         //return the amount of answers and map them to the shoe class
 
