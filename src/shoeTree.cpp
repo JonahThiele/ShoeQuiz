@@ -41,12 +41,12 @@ std::vector<std::string> convert_to_list(std::string str, char limit)
     return l;
 }
 
-void shoeGraph::add_on_attribute(std::string attribute)
+void ShoeTree::add_on_attribute(std::string attribute)
 {
 
 }
 
-ShoeGraph::ShoeGraph(std::string filename){
+ShoeTree::ShoeTree(std::string filename){
     //load all the shoe info from the data json file
     std::ifstream file(filename);
     if(!file.is_open()){
@@ -68,7 +68,8 @@ ShoeGraph::ShoeGraph(std::string filename){
         //Idk about adding this to the constructor it really doesn't seem relevant
         std::string collection = jshoe["Collection:"];
         //this is going to have a more indepth parsing setup
-        std::string weight = jshoe["Weight:"]; //"Men:  8.6 oz / 244g  | Women:  7.6 oz / 216g",
+        //std::string weight = jshoe["Weight:"]; //"Men:  8.6 oz / 244g  | Women:  7.6 oz / 216g",
+        float weight = 0;
         //float drop = convert_to_number(jshoe["Drop:"]);
         std::vector<std::string> pronation = convert_to_list(jshoe["Pronation:"], '|'); // "Neutral Pronation  |  Supination  |  Underpronation",
         std::string arch_type = jshoe["Arch type:"];
@@ -80,7 +81,7 @@ ShoeGraph::ShoeGraph(std::string filename){
         std::vector<std::string> type = convert_to_list(jshoe["Type:"], '|'); // "Maximalist  |  Lightweight",
         //"Widths available:": "Normal", this is too involved to figure out for the 1st iteration, maybe later
         std::vector<std::string> pace = convert_to_list(jshoe["Pace:"], ','); // "Tempo, Competition",
-        std::vector<std::string> distance = convert_to_list(jshoe["Race distance:"], "|"); // "Marathon  |  Half marathon",
+        std::vector<std::string> distance = convert_to_list(jshoe["Race distance:"], '|'); // "Marathon  |  Half marathon",
         // I dont think these are important at all so Im going to disregard them for now"SKUs:": "FN8454002 ,  FN8454104 ,  FN8454601 ,  FN8455001 ,  FN8455101 ,  FN8455102 ,  FN8455701 ,  HQ1718400 ,  HQ3498100 ,  HV4366072",
         float heel_stack = convert_to_number(jshoe["Heel stack"]);
         float forefoot_stack = convert_to_number(jshoe["Forefoot stack"]);

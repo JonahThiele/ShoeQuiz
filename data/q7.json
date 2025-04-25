@@ -6,6 +6,6 @@
     "answers": [
         {"id": "a1", "text": "yes", "metrics":"Heel stack,Midsole softness,Drop,Outsole durability", "values":"35,15.5,9,1.5"},
         {"id": "a2", "text": "sometimes", "metrics":"Heel stack,Midsole softeness,Drop,Outsole durability", "values":"30,14,7,1.25"},
-        {"id": "a3", "text": "no", "metrics":"Heel stack,Midsole softnesss,Drop,Outsole durability", "values":"25,12.5,5,0.9"}
+        {"id": "a3", "text": "no", "metrics":"Heel stack,Midsole softness,Drop,Outsole durability", "values":"25,12.5,5,0.9"}
     ]
 }

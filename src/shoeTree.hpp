@@ -4,7 +4,7 @@
 #include "shoe.hpp"
 #include <memory>
 
-class ShoeGraph {
+class ShoeTree {
     public:
         //pointers to hopefully minimize the overhead of all this
         //pairing attributes with the different shoes

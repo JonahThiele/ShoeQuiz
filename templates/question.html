@@ -20,9 +20,10 @@
         {% for answer in answers %}
             <label for="{{ answer.id }}">{{ answer.text }}</label>
             <!-- again we should be using another field instead of the question number-->
-            <input type="checkbox" id="{{ answer.id }}" name="{{ question_number }}" value="{{ answer.metrics }}:{{ answer.values }}">
+            <input type="checkbox" id="{{ answer.id }}" name="q{{ question_number }}" value="{{ answer.metrics }}:{{ answer.values }}">
         {% endfor %}
     {% endif %}
+    <br>
     <input type="hidden" value="{{ question_number }}" name="question_num">
     <input type="submit" value="{% if question_number < questions %}Next{% else %}To Results{% endif %}">
     </form>

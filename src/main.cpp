@@ -66,42 +66,34 @@ void storeResponses(auto &store, std::string metrics)
 int main()
 {
 
+    //load up and create the shoes graph, this is going to be crazy
+
     //define app to handle all the session data
     using Session = crow::SessionMiddleware<crow::InMemoryStore>;
     crow::App<crow::CookieParser, Session> app{Session{
         crow::CookieParser::Cookie("session")
             .max_age(/*one day*/ 24 * 60 * 60)
             .path("/")
-            .httponly(),
+            .httponly()
+            .same_site(crow::CookieParser::Cookie::SameSitePolicy::Lax),
 
         4,
         crow::InMemoryStore{}
     }};
-
-    //maybe turning off cors will fix the cookie issues
-    // auto &cors = app.get_middleware<crow::CORSHandler>();
-
-
-    // cors
-    //   .global()
-    //     .headers("X-Custom-Header", "Upgrade-Insecure-Requests")
-    //     .methods("POST"_method, "GET"_method)
-    //   .prefix("/cors")
-    //     .origin("localhost:18080")
-    //   .prefix("/nocors")
-    //     .ignore();
-
-    //set up a session to handle the questions storing the results
-    
 
     inja::Environment env;
     inja::json vars;
     //set the port, set the app to run on multiple threads, and run the app
 
     //initial home question
-    CROW_ROUTE(app, "/")([&]{
+    CROW_ROUTE(app, "/")([&](const crow::request& req){
         inja::Template temp = env.parse_template("../templates/index.html");
         std::string result = env.render(temp, vars);
+
+        //set up the session 
+        auto& session = app.get_context<Session>(req);
+        session.set("hi", 1);
+
         return crow::response{result};
     });
 
@@ -146,11 +138,30 @@ int main()
     CROW_ROUTE(app, "/q9")([&]{
         return render_question(vars, env, "../data/q9.json");
     });
+    
+    CROW_ROUTE(app, "/q10")([&]{
+        return render_question(vars, env, "../data/q10.json");
+    });
+
+    //just process all the data in this step aggregated from all the question pages
+    CROW_ROUTE(app, "/results")([&](const crow::request &req){
+        //run the algorithm on the 
+
+        //debugging: making sure we have the right values
+        // auto& session = app.get_context<Session>(req); we do
+        // auto keys = session.keys();
+        
+        inja::Template temp = env.parse_template("../templates/results.html");
+        std::string result = env.render(temp, vars); // this should brick that is okay
+        return crow::response{result};
+    });
 
     CROW_ROUTE(app, "/store").methods(crow::HTTPMethod::POST)([&](const crow::request &req){
         //get the session data
         auto& session = app.get_context<Session>(req);
-        session.set("init", "true");
+        const std::string str = "hi";
+        const std::string str2 = "None";
+        auto key = session.get(str, str2);
 
         //return the amount of answers and map them to the shoe class
 
@@ -160,47 +171,49 @@ int main()
         std::string metrics;
 
         //this works but causes the screen to flash a bit when the redirect doesn't go immediately, Idk how to fix that
-        crow::response  res = crow::response(302, "redirect");
+        crow::response res;
+        std::string redir;
+        //later once this is working clean this up because it is unnecessary and ugly
         switch(q)
         {
             case 1:
-                res.set_header("Location", "http://localhost:18080/q2");
+                redir = "http://localhost:18080/q2";
                 metrics = body.get("q1");
                 break;
             case 2:
-                res.set_header("Location", "http://localhost:18080/q3");
+                redir = "http://localhost:18080/q3";
                 metrics = body.get("q2");
                 break;
             case 3:
-                res.set_header("Location", "http://localhost:18080/q4");
+                redir = "http://localhost:18080/q4";
                 metrics = body.get("q3");
                 break;
             case 4:
-                res.set_header("Location", "http://localhost:18080/q5");
+                redir = "http://localhost:18080/q5";
                 metrics = body.get("q4");
                 break;
             case 5:
-                res.set_header("Location", "http://localhost:18080/q6");
+                redir = "http://localhost:18080/q6";
                 metrics = body.get("q5");    
                 break;
             case 6:
-                res.set_header("Location", "http://localhost:18080/q7");
+                redir = "http://localhost:18080/q7";
                 metrics = body.get("q6");    
                 break;
             case 7:
-                res.set_header("Location", "http://localhost:18080/q8");
+                redir = "http://localhost:18080/q8";
                 metrics = body.get("q7"); 
                 break;
             case 8:
-                res.set_header("Location", "http://localhost:18080/q9");
+                redir = "http://localhost:18080/q9";
                 metrics = body.get("q8"); 
                 break;
             case 9:
-                res.set_header("Location", "http://localhost:18080/q10");
+                redir = "http://localhost:18080/q10";
                 metrics = body.get("q9"); 
                 break;
             case 10:
-                res.set_header("Location", "http://localhost:18080/results");
+                redir = "http://localhost:18080/results";
                 metrics = body.get("q10"); 
             case 0:
                 //time for some strange return logic so that we don't have to duplicate all the store response lines for each question page
@@ -210,7 +223,8 @@ int main()
 
         storeResponses(session, metrics);
         auto keys = session.keys();
-
+        res.set_header("Location", redir);
+        res.code = 302; 
         return res;
 
     });

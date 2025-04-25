@@ -6,6 +6,6 @@
     "answers": [
         {"id": "a1", "text": "often", "metrics":"Reflective elements", "values":"Yes"},
         {"id": "a2", "text": "sometimes", "metrics":"Reflective elements", "values":"Yes"},
-        {"id": "a3", "text": "never", "metrices":"Reflective elements", "values":"No"}
+        {"id": "a3", "text": "never", "metrics":"Reflective elements", "values":"No"}
     ]
 }

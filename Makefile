@@ -22,7 +22,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm $(BUILD_DIR)$(TARGET)
+	rm $(BUILD_DIR)/$(TARGET)
 
 .PHONY: all clean
 

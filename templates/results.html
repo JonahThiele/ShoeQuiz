@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<head>
+    <title>Quiz Results</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Your Best Shoe Recommendations</h1>
+        <p>Based on your answers, here are the shoes that best match your preferences:</p>
+
+        <!-- Display shoe recommendations here -->
+        <div id="recommendations">
+            {% for shoe in shoes %}
+                <div class="shoe-item">
+                    <!--<img src="{{ shoe.image_url }}" alt="{{ shoe.name }}" class="shoe-image">-->
+                    <h2>{{ shoe.name }}</h2>
+                    <p><strong>Price:</strong> ${{ shoe.price }}</p>
+                    <!--<a href="{{ shoe.purchase_link }}" class="purchase-button">Buy Now</a>-->
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

@@ -6,7 +6,7 @@
     "answers":[
         {"id": "a1", "text": "summer", "metrics":"Breathability", "values":"5"},
         {"id": "a2", "text": "fall", "metrics":"Breathability", "values":"3"},
-        {"id": "a3", "text": "winter", "metrices":"Breathability", "values":"2"},
-        {"id": "a4", "text": "spring", "metrices":"Breathability", "values":"3"}
+        {"id": "a3", "text": "winter", "metrics":"Breathability", "values":"2"},
+        {"id": "a4", "text": "spring", "metrics":"Breathability", "values":"3"}
     ]
 }
