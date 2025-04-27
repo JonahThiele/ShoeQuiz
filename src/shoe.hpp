@@ -20,6 +20,7 @@ enum Size {
 class Shoe {
         public:
             std::string name;
+            float price;
             std::array<float , ATTR> points;
             std::shared_ptr<Shoe> right;
             std::shared_ptr<Shoe> left;
@@ -108,6 +109,7 @@ class Shoe {
                 points[20] = outsole_hardness;
                 points[21] = outsole_thickness;
                 points[22] = price;
+                this->price = price;
                 points[23] = (reflective_elements)? 1: 0;
                 points[24] = tongue_padding;
                 points[25] = (heel_tab)? 1: 0;

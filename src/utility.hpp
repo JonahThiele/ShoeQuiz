@@ -1,3 +1,6 @@
+#pragma once
+#include <sstream>
+#include <algorithm>
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -5,7 +8,7 @@
 
 class Utility {
     public:
-        static float ShoeTree::convert_to_number(std::string str)
+        static float convert_to_number(std::string str)
         {
             //start at the back and remove once we hit first number
             int end_str = 0;
@@ -25,7 +28,7 @@ class Utility {
         }
         
         //classic splitting of the 
-        static std::vector<std::string> ShoeTree::convert_to_list(std::string str, char limit)
+        static std::vector<std::string> convert_to_list(std::string str, char limit)
         {
             //list
             std::vector<std::string> l;
