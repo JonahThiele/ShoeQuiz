@@ -18,9 +18,12 @@ enum Size {
 
 //this is functionaly a node for the KD tree 
 class Shoe {
-        std::string name;
-        std::array<float , ATTR> points;
-        std
+        public:
+            std::string name;
+            std::array<float , ATTR> points;
+            std::shared_ptr<Shoe> right;
+            std::shared_ptr<Shoe> left;
+
         // 1. double  heel_stack;
         // 2. double forefoot_stack;
         // //both of these in HA units
@@ -66,11 +69,10 @@ class Shoe {
         // //I might add the gusset type padding later, idk
         // 26. double heel_tab;
         // 27. double removable_insole;
-    public:
         Shoe(std::string name, float heel_stack, float forefoot_stack, 
             float midsole_softness, float midsole_softness_cold, 
             float midsole_softness_cold_per, float insole_thickness, 
-            float size, float toebox_width_widest_prt, 
+            std::string size, float toebox_width_widest_prt, 
             float toebox_width_big_toe, float toebox_height, int torsional_rigidity,
             int heel_counter_stiffness, float midsole_width_forefoot,
             float midesole_width_heel, float flexibility,

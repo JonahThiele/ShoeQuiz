@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
-#include "shoe.hpp"
+#include "shoeTree.hpp"
 
 //some annoying gets from the query string request 
 #include <bits/stdc++.h>
@@ -65,8 +65,8 @@ void storeResponses(auto &store, std::string metrics)
 
 int main()
 {
-
-    //load up and create the shoes graph, this is going to be crazy
+    //fingers crossed
+    ShoeTree tree("../scraping/shoes.json");
 
     //define app to handle all the session data
     using Session = crow::SessionMiddleware<crow::InMemoryStore>;
