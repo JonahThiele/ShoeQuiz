@@ -67,6 +67,7 @@ int main()
 {
     //fingers crossed
     ShoeTree tree("../scraping/shoes.json");
+    tree.print();
 
     //define app to handle all the session data
     using Session = crow::SessionMiddleware<crow::InMemoryStore>;

@@ -41,6 +41,69 @@ std::vector<std::string> ShoeTree::convert_to_list(std::string str, char limit)
     return l;
 }
 
+//helper function for the knn nearest neighbor searchs
+//I wonder if this can be speed up with 
+float ShoeTree::distance_squared(std::array<float, ATTR> a, std::array<float, ATTR> b)
+{
+    float dist = 0;
+    for(int i = 0; i < ATTR; i++)
+    {
+        float d = a[i] - b[i];
+        dist += (d * d);
+    }
+    return dist;
+}
+
+//make sure that the priority queue actually acts like a priority queue
+void ShoeTree::kNearestRecursive(std::shared_ptr<Shoe> node, std::shared_ptr<Shoe> perfect_shoe,
+    int depth, int k, std::priority_queue<std::pair<float, std::shared_ptr<Shoe>>> max_heap)
+{
+    if(!node)
+        return;
+
+    float dist = distance_squared(perfect_shoe->points, node->points);
+
+    if(max_heap.size() < k)
+    {
+        max_heap.emplace(dist, node);
+    } else if (dist < max_heap.top().first)
+    {
+        max_heap.pop();
+        max_heap.emplace(dist, node);
+    }
+
+    int cd = depth % ATTR;
+    bool goLeft = perfect_shoe->points[cd] < node->points[cd];
+    auto next = goLeft ? node->left : node->right;
+    auto other = goLeft ? node->right : node->left;
+
+    kNearestRecursive(next, perfect_shoe, depth + 1, k, max_heap);
+
+    //check other side if it is closer
+    float axis_diff = perfect_shoe->points[cd] - node->points[cd];
+    if(max_heap.size() < k || axis_diff * axis_diff < max_heap.top().first)
+    {
+        kNearestRecursive(other, perfect_shoe, depth + 1, k, max_heap);
+    }
+}
+
+std::vector<std::shared_ptr<Shoe>> ShoeTree::kNearestNeighbors(std::shared_ptr<Shoe> perfect_shoe, int k)
+{
+    std::priority_queue<std::pair<float, std::shared_ptr<Shoe>>> max_heap;
+    kNearestRecursive(root, perfect_shoe, 0, k, max_heap);
+
+    std::vector<std::shared_ptr<Shoe>> result;
+    while(!max_heap.empty())
+    {
+        result.push_back(max_heap.top().second);
+        max_heap.pop();
+    }
+    //closeest shoes are first
+    std::reverse(result.begin(), result.end());
+    return result;
+}
+
+
 std::shared_ptr<Shoe> ShoeTree::insertRecursive(std::shared_ptr<Shoe> node, std::shared_ptr<Shoe> shoe, int depth)
 {
             //its  in a new spot that is can be added to
@@ -63,7 +126,7 @@ std::shared_ptr<Shoe> ShoeTree::insertRecursive(std::shared_ptr<Shoe> node, std:
 }
 
 //purely for debugging
-void printRecursive(std::shared_ptr<Shoe> node, int depth)
+void ShoeTree::printRecursive(std::shared_ptr<Shoe> node, int depth)
         {
             if(node == nullptr)
                 return;
@@ -84,7 +147,7 @@ void printRecursive(std::shared_ptr<Shoe> node, int depth)
             std::cout << ")\n";
 
             printRecursive(node->left, depth +1);
-            printRecursive(node->left, depth +1);
+            printRecursive(node->right, depth +1);
         }
 
 
