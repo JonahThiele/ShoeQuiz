@@ -2,15 +2,14 @@
 #include <vector>
 #include <string>
 #include "shoe.hpp"
+#include "utility.hpp"
 #include <memory>
 #include <queue>
 #include <array>
 
 class ShoeTree {
     private:
-        //utility functions
-        float convert_to_number(std::string);
-        std::vector<std::string> convert_to_list(std::string, char);
+        //utility function
         float distance_squared(std::array<float, ATTR>, std::array<float, ATTR>);
         //pairing attributes with the different shoes
         std::shared_ptr<Shoe> root = nullptr; //start off with null ptr

@@ -9,6 +9,7 @@
 #include <string>
 #include <sstream>
 #include "shoeTree.hpp"
+#include "utility.hpp"
 
 //some annoying gets from the query string request 
 #include <bits/stdc++.h>
@@ -146,11 +147,80 @@ int main()
 
     //just process all the data in this step aggregated from all the question pages
     CROW_ROUTE(app, "/results")([&](const crow::request &req){
-        //run the algorithm on the 
+        
+        //create the perfect shoe from all the stored answers of the questions in the session data
+        auto& session = app.get_context<Session>(req);
 
-        //debugging: making sure we have the right values
-        // auto& session = app.get_context<Session>(req); we do
-        // auto keys = session.keys();
+        std::string name = session.get("name");
+        std::string terrain = session.get("Terrain:", "None");
+        std::string arch_support = session.get("Arch support:", "None");
+        float heel_height = Utility::convert_to_number(session.get("Heel height:", "None"));
+        float forefoot_height = Utility::convert_to_number(session.get("Forefoot height:", "None"));
+        std::string collection = session.get("Collection:", "None");
+        float weight = 0;
+        std::vector<std::string> pronation = Utility::convert_to_list(session.get("Pronation:", "None"), '|');
+        std::string arch_type = session.get("Arch type:", "None");
+        std::vector<std::string> material = Utility::convert_to_list(session.get("Material:", "None"), '|');
+        std::vector<std::string> features = Utility::convert_to_list(session.get("Features:", "None"), '|');
+        std::vector<std::string> strike_pattern = Utility::convert_to_list(session.get("Strike Pattern:", "None"), '|');
+        std::vector<std::string> season = Utility::convert_to_list(session.get("Season:", "None"), '|');
+        std::string brand = session.get("BRAND Brand:", "None");
+        std::vector<std::string> type = Utility::convert_to_list(session.get("Type:", "None"), '|');
+        std::vector<std::string> pace = Utility::convert_to_list(session.get("Pace:", "None"), ',');
+        std::vector<std::string> distance = Utility::convert_to_list(session.get("Race distance:", "None"), '|');
+        float heel_stack = Utility::convert_to_number(session.get("Heel stack", "None"));
+        float forefoot_stack = Utility::convert_to_number(session.get("Forefoot stack", "None"));
+        float drop = Utility::convert_to_number(session.get("Drop", "None"));
+        float midsole_softness = Utility::convert_to_number(session.get("Midsole softness", "None"));
+        float secondary_foam_softness = Utility::convert_to_number(session.get("Secondary foam softness", "None"));
+        float midsole_softness_in_cold = Utility::convert_to_number(session.get("Midsole softness in cold", "None"));
+        float midsole_softness_in_cold_per = Utility::convert_to_number(session.get("Midsole softness in cold (%)", "None"));
+        float insole_thickness = Utility::convert_to_number(session.get("Insole thickness", "None"));
+        std::string size = session.get("Size", "None");
+        float toebox_width_widest_prt = Utility::convert_to_number(session.get("Toebox width - widest part (new method)", "None"));
+        float toebox_width_big_toe = Utility::convert_to_number(session.get("Toebox width - big toe (new method)", "None"));
+        float toebox_height = Utility::convert_to_number(session.get("Toebox height", "None"));
+        int torsional_rigidity = (int)Utility::convert_to_number(session.get("Torsional rigidity", "None"));
+        int heel_counter_stiffness = (int)Utility::convert_to_number(session.get("Heel counter stiffness", "None"));
+        float midsole_width_forefoot = Utility::convert_to_number(session.get("Midsole width - forefoot", "None"));
+        float midesole_width_heel = Utility::convert_to_number(session.get("Midsole width - heel", "None"));
+        float flexibility = Utility::convert_to_number(session.get("Flexibility / Stiffness (new method)", "None"));
+        float stiffness_in_cold = Utility::convert_to_number(session.get("Stiffness in cold", "None"));
+        float stiffness_in_cold_per = Utility::convert_to_number(session.get("Stiffness in cold (%)", "None"));
+        int breathability = (int)Utility::convert_to_number(session.get("Breathability", "None"));
+        int toebox_durability = (int)Utility::convert_to_number(session.get("Toebox durability", "None"));
+        int heel_padding_durability = (int)Utility::convert_to_number(session.get("Heel padding durability", "None"));
+        float outsole_hardness = Utility::convert_to_number(session.get("Outsole hardness", "None"));
+        float outsole_durability = Utility::convert_to_number(session.get("Outsole durability", "None"));
+        float outsole_thickness = Utility::convert_to_number(session.get("Outsole thickness", "None"));
+        std::string price_str = session.get("Price", "None");
+        price_str.erase(0,1);
+        float price = Utility::convert_to_number(price_str);
+        bool reflective_elements = (session.get("Reflective elements", "None") == "Yes") ? true : false;
+        float tongue_padding = Utility::convert_to_number(session.get("Tongue padding", "None"));
+        // probaly disregard this as well "Tongue: gusset type": "Both sides (semi)",
+        bool heel_tab = (session.get("Heel tab", "None") == "None")? false : true;
+        bool removable_insole = (session.get("Removeable insole", "None") == "Yes") ? true : false;
+
+
+        Shoe perfect_shoe = Shoe(name, heel_stack, forefoot_stack, 
+            midsole_softness, midsole_softness_in_cold, 
+            midsole_softness_in_cold_per, insole_thickness, 
+            size, toebox_width_widest_prt, 
+            toebox_width_big_toe, toebox_height, torsional_rigidity,
+            heel_counter_stiffness, midsole_width_forefoot,
+            midesole_width_heel, flexibility,
+            stiffness_in_cold, stiffness_in_cold_per,
+            weight, breathability, toebox_durability,
+            outsole_hardness, outsole_thickness,
+            price, reflective_elements,
+            tongue_padding, heel_tab,
+            removable_insole );
+
+        //get the list of shoes back 
+        std::vector<std::shared_ptr<Shoe>> tree.kNearestNeighbors(perfect_shoe, ATTR);
+
+        //load the vector into a map to parse the results
         
         inja::Template temp = env.parse_template("../templates/results.html");
         std::string result = env.render(temp, vars); // this should brick that is okay
@@ -160,8 +230,6 @@ int main()
     CROW_ROUTE(app, "/store").methods(crow::HTTPMethod::POST)([&](const crow::request &req){
         //get the session data
         auto& session = app.get_context<Session>(req);
-        const std::string str = "hi";
-        const std::string str2 = "None";
         auto key = session.get(str, str2);
 
         //return the amount of answers and map them to the shoe class
