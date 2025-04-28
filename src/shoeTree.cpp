@@ -19,7 +19,7 @@ float ShoeTree::distance_squared(std::array<float, ATTR> a, std::array<float, AT
 
 //make sure that the priority queue actually acts like a priority queue
 void ShoeTree::kNearestRecursive(std::shared_ptr<Shoe> node, std::shared_ptr<Shoe> perfect_shoe,
-    int depth, int k, std::priority_queue<std::pair<float, std::shared_ptr<Shoe>>> max_heap)
+    int depth, int k, std::priority_queue<std::pair<float, std::shared_ptr<Shoe>>> &max_heap)
 {
     if(!node)
         return;

@@ -48,7 +48,7 @@ void storeResponses(auto &store, std::string metrics)
         metric_titles.push_back(values);
     }
     values.clear();
-    std::stringstream metric_values_ss(parsed_metrics[0]);
+    std::stringstream metric_values_ss(parsed_metrics[1]);
     while(std::getline(metric_values_ss, values, ','))
     {
         metric_values.push_back(values);
@@ -151,7 +151,12 @@ int main()
         //create the perfect shoe from all the stored answers of the questions in the session data
         auto& session = app.get_context<Session>(req);
 
-        std::string name = session.get<std::string>("name");
+        // auto keys = session.keys();
+        // std::string str = "Breathability";
+        // for (const auto& key : keys) {
+        //     std::cout << "Session Key: " << key << " Value: " << session.get<std::string>(key, "Not Found") << std::endl;
+        // }
+
         std::string terrain = session.get<std::string>("Terrain:", "None");
         std::string arch_support = session.get<std::string>("Arch support:", "None");
         float heel_height = Utility::convert_to_number(session.get<std::string>("Heel height:", "None"));
@@ -203,7 +208,7 @@ int main()
         bool removable_insole = (session.get<std::string>("Removeable insole", "None") == "Yes") ? true : false;
 
 
-        Shoe perfect_shoe = Shoe(name, heel_stack, forefoot_stack, 
+        Shoe perfect_shoe = Shoe("perfect_shoe", heel_stack, forefoot_stack, 
             midsole_softness, midsole_softness_in_cold, 
             midsole_softness_in_cold_per, insole_thickness, 
             size, toebox_width_widest_prt, 

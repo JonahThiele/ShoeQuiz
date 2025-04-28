@@ -12,10 +12,8 @@
         <div id="recommendations">
             {% for shoe in shoes %}
                 <div class="shoe-item">
-                    <!--<img src="{{ shoe.image_url }}" alt="{{ shoe.name }}" class="shoe-image">-->
                     <h2>{{ shoe.name }}</h2>
                     <p><strong>Price:</strong> ${{ shoe.price }}</p>
-                    <!--<a href="{{ shoe.purchase_link }}" class="purchase-button">Buy Now</a>-->
                 </div>
             {% endfor %}
         </div>

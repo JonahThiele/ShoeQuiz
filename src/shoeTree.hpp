@@ -18,7 +18,7 @@ class ShoeTree {
         std::shared_ptr<Shoe>  insertRecursive(std::shared_ptr<Shoe>, std::shared_ptr<Shoe>, int);
         //search for the closest point on the kd tree 
         void kNearestRecursive(std::shared_ptr<Shoe>, std::shared_ptr<Shoe>, int, int, 
-            std::priority_queue<std::pair<float, std::shared_ptr<Shoe>>>);
+            std::priority_queue<std::pair<float, std::shared_ptr<Shoe>>>&);
 
         //print out the tree for debugging purposes early on 
         void printRecursive(std::shared_ptr<Shoe>, int);
