@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include "../includes/json.hpp"
+#include <regex>
 
 //helper function for the knn nearest neighbor searchs
 //I wonder if this can be speed up with 
@@ -26,7 +27,7 @@ void ShoeTree::kNearestRecursive(std::shared_ptr<Shoe> node, std::shared_ptr<Sho
 
     float dist = distance_squared(perfect_shoe->points, node->points);
 
-    if(max_heap.size() < k)
+    if(max_heap.size() < static_cast<size_t>(k))
     {
         max_heap.emplace(dist, node);
     } else if (dist < max_heap.top().first)
@@ -44,7 +45,7 @@ void ShoeTree::kNearestRecursive(std::shared_ptr<Shoe> node, std::shared_ptr<Sho
 
     //check other side if it is closer
     float axis_diff = perfect_shoe->points[cd] - node->points[cd];
-    if(max_heap.size() < k || axis_diff * axis_diff < max_heap.top().first)
+    if(max_heap.size() < static_cast<size_t>(k) || axis_diff * axis_diff < max_heap.top().first)
     {
         kNearestRecursive(other, perfect_shoe, depth + 1, k, max_heap);
     }
@@ -129,34 +130,26 @@ ShoeTree::ShoeTree(std::string filename){
     {
 
         std::string name = jshoe["name"];
-        //using default values for the company stats because they seem to have variable ones
-        std::string terrain = jshoe.value("Terrain:", "None");
-        std::string arch_support = jshoe.value("Arch support:", "None");
+        bool terrain = (jshoe.value("Terrain:", "None") == "Road")? true : false;
+        bool arch_support = (jshoe.value("Arch support:", "None") == "Neutral")? true : false;
         float heel_height = Utility::convert_to_number(jshoe.value("Heel height:", "None"));
         float forefoot_height = Utility::convert_to_number(jshoe.value("Forefoot height:", "None"));
-        //Idk about adding this to the constructor it really doesn't seem relevant
-        std::string collection = jshoe.value("Collection:", "None");
-        //this is going to have a more indepth parsing setup
-        //std::string weight = jshoe["Weight:"]; //"Men:  8.6 oz / 244g  | Women:  7.6 oz / 216g",
-        float weight = 0;
-        //float drop = convert_to_number(jshoe["Drop:"]);
-        std::vector<std::string> pronation = Utility::convert_to_list(jshoe.value("Pronation:", "None"), '|'); // "Neutral Pronation  |  Supination  |  Underpronation",
-        std::string arch_type = jshoe.value("Arch type:", "None");
-        std::vector<std::string> material = Utility::convert_to_list(jshoe.value("Material:", "None"), '|'); // "Mesh  |  Reflective",
-        std::vector<std::string> features = Utility::convert_to_list(jshoe.value("Features:", "None"), '|'); // "Orthotic friendly  |  Cushioned  |  Carbon plate  |  Removable insole  |  Rocker",
-        std::vector<std::string> strike_pattern = Utility::convert_to_list(jshoe.value("Strike Pattern:", "None"), '|'); //"Heel strike  |  Forefoot/Midfoot strike",
-        std::vector<std::string> season = Utility::convert_to_list(jshoe.value("Season:", "None"), '|'); //"All seasons",
+        //this is needed but I have no idea how I would generate a unique number from this
+        //std::vector<std::string> pronation = Utility::convert_to_list(jshoe.value("Pronation:", "None"), '|'); // "Neutral Pronation  |  Supination  |  Underpronation",
+        bool arch_type = (jshoe.value("Arch type:", "None") == "High arch")? true : false;
+        //this is also needed but I have no idea how I would generate a unique number from this, or multiple points would need to be set
+        //std::vector<std::string> strike_pattern = Utility::convert_to_list(jshoe.value("Strike Pattern:", "None"), '|'); //"Heel strike  |  Forefoot/Midfoot strike",
+        //this is also needed but I have no idea how I would generate a unique identifier/number from this
+        //std::vector<std::string> season = Utility::convert_to_list(jshoe.value("Season:", "None"), '|'); //"All seasons",
         std::string brand = jshoe.value("BRAND Brand:", "None");
-        std::vector<std::string> type = Utility::convert_to_list(jshoe.value("Type:", "None"), '|'); // "Maximalist  |  Lightweight",
-        //"Widths available:": "Normal", this is too involved to figure out for the 1st iteration, maybe later
-        std::vector<std::string> pace = Utility::convert_to_list(jshoe.value("Pace:", "None"), ','); // "Tempo, Competition",
-        std::vector<std::string> distance = Utility::convert_to_list(jshoe.value("Race distance:", "None"), '|'); // "Marathon  |  Half marathon",
-        // I dont think these are important at all so Im going to disregard them for now"SKUs:": "FN8454002 ,  FN8454104 ,  FN8454601 ,  FN8455001 ,  FN8455101 ,  FN8455102 ,  FN8455701 ,  HQ1718400 ,  HQ3498100 ,  HV4366072",
+        //this could be useful but I have no idea how to generate a unique number from this
+        //std::vector<std::string> type = Utility::convert_to_list(jshoe.value("Type:", "None"), '|'); // "Maximalist  |  Lightweight",
+        //this could also be a really useful but I have no idea how it make it a discrete data point
+        //std::vector<std::string> pace = Utility::convert_to_list(jshoe.value("Pace:", "None"), ','); // "Tempo, Competition",
         float heel_stack = Utility::convert_to_number(jshoe.value("Heel stack", "None"));
         float forefoot_stack = Utility::convert_to_number(jshoe.value("Forefoot stack", "None"));
         float drop = Utility::convert_to_number(jshoe.value("Drop", "None"));
         float midsole_softness = Utility::convert_to_number(jshoe.value("Midsole softness", "None"));
-        //I don't know if this field is shared by all the json file ones 
         float secondary_foam_softness = Utility::convert_to_number(jshoe.value("Secondary foam softness", "None"));
         float midsole_softness_in_cold = Utility::convert_to_number(jshoe.value("Midsole softness in cold", "None"));
         float midsole_softness_in_cold_per = Utility::convert_to_number(jshoe.value("Midsole softness in cold (%)", "None"));
@@ -169,18 +162,16 @@ ShoeTree::ShoeTree(std::string filename){
         int heel_counter_stiffness = (int)Utility::convert_to_number(jshoe.value("Heel counter stiffness", "None"));
         float midsole_width_forefoot = Utility::convert_to_number(jshoe.value("Midsole width - forefoot", "None"));
         float midesole_width_heel = Utility::convert_to_number(jshoe.value("Midsole width - heel", "None"));
-        float flexibility = Utility::convert_to_number(jshoe.value("Flexibility / Stiffness (new method)", "None"));
-        //"Flexibility / Stiffness (old method)": "35.5N",
+        float flexibility = Utility::convert_to_number(jshoe.value("Flexibility / Stiffness (old method)", "None"));
         float stiffness_in_cold = Utility::convert_to_number(jshoe.value("Stiffness in cold", "None"));
         float stiffness_in_cold_per = Utility::convert_to_number(jshoe.value("Stiffness in cold (%)", "None"));
-        // IDK how to do this yet "Weight": "8.75 oz (248g)",
+        float weight = Utility::parseWeight(jshoe.value("Weight", "None"));
         int breathability = (int)Utility::convert_to_number(jshoe.value("Breathability", "None"));
         int toebox_durability = (int)Utility::convert_to_number(jshoe.value("Toebox durability", "None"));
         int heel_padding_durability = (int)Utility::convert_to_number(jshoe.value("Heel padding durability", "None"));
         float outsole_hardness = Utility::convert_to_number(jshoe.value("Outsole hardness", "None"));
         float outsole_durability = Utility::convert_to_number(jshoe.value("Outsole durability", "None"));
         float outsole_thickness = Utility::convert_to_number(jshoe.value("Outsole thickness", "None"));
-        //we need to create a customer one for this "Price": "$170",
         std::string price_str = jshoe.value("Price", "None");
         price_str.erase(0,1);
         float price = Utility::convert_to_number(price_str);
@@ -202,7 +193,9 @@ ShoeTree::ShoeTree(std::string filename){
             outsole_hardness, outsole_thickness,
             price, reflective_elements,
             tongue_padding, heel_tab,
-            removable_insole );
+            removable_insole, terrain, arch_support,
+            heel_height, forefoot_height, arch_type, brand,
+            drop, secondary_foam_softness, heel_padding_durability, outsole_durability);
         
         //add the shoe to the tree
         root = insertRecursive(root, std::make_shared<Shoe>(shoe), 0);

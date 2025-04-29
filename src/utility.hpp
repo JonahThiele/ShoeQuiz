@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <regex>
 
 class Utility {
     public:
@@ -37,10 +38,27 @@ class Utility {
             while(std::getline(ss, el, limit))
             {
                 //trim the strings
-                el.erase(el.begin(), std::find_if(el.begin(), el.end(), std::bind1st(std::not_equal_to<char>(), ' ')));
-                el.erase(std::find_if(el.rbegin(), el.rend(), std::bind1st(std::not_equal_to<char>(), ' ')).base(), el.end());
+                el.erase(el.begin(), std::find_if(el.begin(), el.end(), [](char c) {
+                    return c != ' ';
+                }));
+                el.erase(std::find_if(el.rbegin(), el.rend(), [](char c) {
+                    return c != ' ';
+                }).base(), el.end());                
                 l.push_back(el);
             }
             return l;
+        }
+
+        static float parseWeight(std::string str)
+        {
+            std::regex pattern("R(\\d+(?:\\.\\d+)?)");
+            std::smatch match;
+            if(std::regex_search(str, match, pattern))
+            {
+                return std::stof(match[1]);
+            }
+
+            //error
+            return -1;
         }
 };

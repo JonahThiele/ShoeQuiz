@@ -3,7 +3,7 @@
 #include <map>
 #include <array>
 #include <memory>
-#define ATTR 27
+#define ATTR 37
 
 //these were the only sizes I saw after briefly skimming the file 
 enum Size {
@@ -14,7 +14,39 @@ enum Size {
     HALF_SIZE_LARGE
 };
 
- extern std::map<std::string, Size> SizeLabels;
+enum Brand {
+    ADIDAS,
+    ALLBIRDS,
+    ALTRA,
+    APL,
+    ASICS,
+    BROOKS,
+    HOKA,
+    INOV8,
+    JORDAN,
+    KAILAS,
+    LA_SPORTIVA,
+    MERRELL,
+    MIZUNO,
+    NEW_BALANCE,
+    NIKE,
+    NNORMAL,
+    NOBULL,
+    ON,
+    PUMA,
+    REEBOK,
+    SALOMON,
+    SAUCONY,
+    SCARPA,
+    SKETCHERS,
+    THE_NORTH_FACE,
+    TOPO_ATHLETIC,
+    UNDER_ARMOR,
+    XERO_SHOES
+};
+
+extern std::map<std::string, Brand> BrandLabels;
+extern std::map<std::string, Size> SizeLabels;
 
 //this is functionaly a node for the KD tree 
 class Shoe {
@@ -24,7 +56,7 @@ class Shoe {
             std::array<float , ATTR> points;
             std::shared_ptr<Shoe> right;
             std::shared_ptr<Shoe> left;
-
+        //these are data points we are doing the KD-tree search on
         // 1. double  heel_stack;
         // 2. double forefoot_stack;
         // //both of these in HA units
@@ -70,6 +102,16 @@ class Shoe {
         // //I might add the gusset type padding later, idk
         // 26. double heel_tab;
         // 27. double removable_insole;
+        // 28. int terrain; //0 road or 1 trail
+        // 29. int Arch_support; // 0 Neutral or 1 Stability 
+        // 30. float heel_height;
+        // 31. float forefoot_height;
+        // 32. int arch_type; // 0 high arch or 1 low arch
+        // 33. int brand;
+        // 34. float drop;
+        // 35. float secondary_foam_softness;
+        // 36. int heel_padding_durability;
+        // 37. int outsole_durability; 
         Shoe(std::string name, float heel_stack, float forefoot_stack, 
             float midsole_softness, float midsole_softness_cold, 
             float midsole_softness_cold_per, float insole_thickness, 
@@ -82,7 +124,10 @@ class Shoe {
             float outsole_hardness,float outsole_thickness,
             int price, bool reflective_elements,
             float tongue_padding, bool heel_tab,
-            bool removable_insole )
+            bool removable_insole, bool road_terrain, bool arch_stablility_support,
+            float heel_height, float forefoot_height, bool high_arch_type, std::string brand,
+            float drop, float secondary_foam_softness, float heel_padding_durability,
+            float outsole_durability)
             {
 
                 this->name = name;
@@ -114,5 +159,15 @@ class Shoe {
                 points[24] = tongue_padding;
                 points[25] = (heel_tab)? 1: 0;
                 points[26] = (removable_insole)? 1 : 0;
+                points[27] = (road_terrain)? 0 : 1;
+                points[28] = (arch_stablility_support)? 1: 0;
+                points[29] = heel_height;
+                points[30] = forefoot_height;
+                points[31] = (high_arch_type)? 0 : 1;
+                points[32] = BrandLabels[brand];
+                points[33] = drop;
+                points[34] = secondary_foam_softness;
+                points[35] = heel_padding_durability;
+                points[36] = outsole_durability;
             }
 };

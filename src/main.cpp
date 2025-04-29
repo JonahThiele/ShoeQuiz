@@ -151,24 +151,14 @@ int main()
         //create the perfect shoe from all the stored answers of the questions in the session data
         auto& session = app.get_context<Session>(req);
 
-        // auto keys = session.keys();
-        // std::string str = "Breathability";
-        // for (const auto& key : keys) {
-        //     std::cout << "Session Key: " << key << " Value: " << session.get<std::string>(key, "Not Found") << std::endl;
-        // }
-
-        std::string terrain = session.get<std::string>("Terrain:", "None");
-        std::string arch_support = session.get<std::string>("Arch support:", "None");
+        float weight =  Utility::parseWeight(session.get<std::string>("Weight", "None"));
+        bool terrain = (session.get<std::string>("Terrain:", "None") == "Road")? true : false;
+        bool arch_support = (session.get<std::string>("Arch support:", "None") == "Neutral")? true : false;
         float heel_height = Utility::convert_to_number(session.get<std::string>("Heel height:", "None"));
-        float forefoot_height = Utility::convert_to_number(session.get("Forefoot height:", "None"));
-        std::string collection = session.get<std::string>("Collection:", "None");
-        float weight = 0;
-        std::vector<std::string> pronation = Utility::convert_to_list(session.get<std::string>("Pronation:", "None"), '|');
-        std::string arch_type = session.get<std::string>("Arch type:", "None");
-        std::vector<std::string> material = Utility::convert_to_list(session.get<std::string>("Material:", "None"), '|');
-        std::vector<std::string> features = Utility::convert_to_list(session.get<std::string>("Features:", "None"), '|');
-        std::vector<std::string> strike_pattern = Utility::convert_to_list(session.get<std::string>("Strike Pattern:", "None"), '|');
-        std::vector<std::string> season = Utility::convert_to_list(session.get<std::string>("Season:", "None"), '|');
+        float forefoot_height = Utility::convert_to_number(session.get<std::string>("Forefoot height:", "None"));
+       
+        bool arch_type = (session.get<std::string>("Arch type:", "None") == "High arch")? true : false;
+
         std::string brand = session.get<std::string>("BRAND Brand:", "None");
         std::vector<std::string> type = Utility::convert_to_list(session.get<std::string>("Type:", "None"), '|');
         std::vector<std::string> pace = Utility::convert_to_list(session.get<std::string>("Pace:", "None"), ',');
@@ -203,7 +193,6 @@ int main()
         float price = Utility::convert_to_number(price_str);
         bool reflective_elements = (session.get<std::string>("Reflective elements", "None") == "Yes") ? true : false;
         float tongue_padding = Utility::convert_to_number(session.get<std::string>("Tongue padding", "None"));
-        // probaly disregard this as well "Tongue: gusset type": "Both sides (semi)",
         bool heel_tab = (session.get<std::string>("Heel tab", "None") == "None")? false : true;
         bool removable_insole = (session.get<std::string>("Removeable insole", "None") == "Yes") ? true : false;
 
@@ -220,7 +209,9 @@ int main()
             outsole_hardness, outsole_thickness,
             price, reflective_elements,
             tongue_padding, heel_tab,
-            removable_insole );
+            removable_insole, terrain, arch_support, heel_height,
+            forefoot_height, arch_type, brand, drop, secondary_foam_softness,
+            heel_padding_durability, outsole_durability);
 
         //get the list of shoes back 
         std::vector<std::shared_ptr<Shoe>> results = tree.kNearestNeighbors(std::make_shared<Shoe>(perfect_shoe), ATTR);
