@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <filesystem>
 #include "shoeTree.hpp"
 #include "utility.hpp"
 
@@ -15,16 +16,32 @@
 #include <bits/stdc++.h>
 
 
-crow::response render_question(inja::json &vars, inja::Environment &env, std::string path) {
-    try {
-        std::string result = env.render_file_with_json_file("../templates/question.html", path);
-        return crow::response{result};
+void register_question_routes(crow::App<crow::CookieParser, crow::SessionMiddleware<crow::InMemoryStore> >& app, inja::Environment& env, inja::json& vars, std::string questions_dir)
+{
+    std::regex question_pattern(R"(q(\d+)\.json)");
     
-    } catch (const std::exception& e) {
-        return crow::response(404, std::string("Template or data error: ") + e.what());
+    for(auto file : std::filesystem::directory_iterator(questions_dir))
+    {
+        // it hits a folder a link etc
+        if(!file.is_regular_file()) continue;
+        std::string filename = file.path().filename().string();
+        std::smatch match;
+        if(std::regex_match(filename, match, question_pattern)) {
+            std::string question_num = match[1];
+            std::string route_path = "/q" + question_num;
+            std::string full_path = file.path().string();
+            
+            app.route_dynamic(route_path)
+            .methods(crow::HTTPMethod::GET)
+            ([&, full_path](const crow::request& req, crow::response& res){
+                std::string result = env.render_file_with_json_file("../templates/question.html", full_path);
+                res.write(result);
+                res.end();
+            });
+        }
     }
+      
 }
-
 
 //I have no idea what the get_context returns so I am using auto
 void storeResponses(auto &store, std::string metrics)
@@ -69,6 +86,9 @@ int main()
     //fingers crossed
     ShoeTree tree("../scraping/shoes.json");
     //tree.print();
+    std::fstream shoes_file("../scraping/shoes.json");
+    nlohmann::json::json shoes;
+    shoes_file >> shoes;
 
     //define app to handle all the session data
     using Session = crow::SessionMiddleware<crow::InMemoryStore>;
@@ -94,7 +114,6 @@ int main()
 
         //set up the session 
         auto& session = app.get_context<Session>(req);
-        session.set("hi", 1);
 
         return crow::response{result};
     });
@@ -106,43 +125,13 @@ int main()
         return crow::response{result};
     });
 
-    //end points for all the various questions this was about as clean as I could get it
-    //make these endpoints somehow dynamically
-    CROW_ROUTE(app, "/q1")([&]{
-        return render_question(vars, env, "../data/q1.json");
-    });
-    CROW_ROUTE(app, "/q2")([&]{
-        return render_question(vars, env, "../data/q2.json");
-    });
+    //use a template to handle the types
+    register_question_routes(app, env, vars, "../data");
 
-    CROW_ROUTE(app, "/q3")([&]{
-        return render_question(vars, env, "../data/q3.json");
-    });
-
-    CROW_ROUTE(app, "/q4")([&]{
-        return render_question(vars, env, "../data/q4.json");
-    });
-    CROW_ROUTE(app, "/q5")([&]{
-        return render_question(vars, env, "../data/q5.json");
-    });
-
-    CROW_ROUTE(app, "/q6")([&]{
-        return render_question(vars, env, "../data/q6.json");
-    });
-
-    CROW_ROUTE(app, "/q7")([&]{
-        return render_question(vars, env, "../data/q7.json");
-    });
-    CROW_ROUTE(app, "/q8")([&]{
-        return render_question(vars, env, "../data/q8.json");
-    });
-
-    CROW_ROUTE(app, "/q9")([&]{
-        return render_question(vars, env, "../data/q9.json");
-    });
-    
-    CROW_ROUTE(app, "/q10")([&]{
-        return render_question(vars, env, "../data/q10.json");
+    CROW_ROUTE(app, "/initialshoe").methods(crow::HTTPMethod::GET)([&](const crow::request &req){
+        //get the session data
+        std::string result = env.render_file_with_json_file("../templates/chooseshoe.html", "../scraping/all_shoes.json");
+        return crow::response{result};
     });
 
     //just process all the data in this step aggregated from all the question pages
@@ -238,60 +227,67 @@ int main()
 
         auto body = req.get_body_params();
         long int q = std::strtol(body.get("question_num"),NULL, 10);
-
+        long int questions = std::strtol(body.get("questions"), NULL, 10);
+        
         std::string metrics;
 
         //this works but causes the screen to flash a bit when the redirect doesn't go immediately, Idk how to fix that
         crow::response res;
         std::string redir;
         //later once this is working clean this up because it is unnecessary and ugly
-        switch(q)
+        //calculate what is the largest number of shoe
+        if(q == 0)
         {
-            case 1:
-                redir = "http://localhost:18080/q2";
-                metrics = body.get("q1");
-                break;
-            case 2:
-                redir = "http://localhost:18080/q3";
-                metrics = body.get("q2");
-                break;
-            case 3:
-                redir = "http://localhost:18080/q4";
-                metrics = body.get("q3");
-                break;
-            case 4:
-                redir = "http://localhost:18080/q5";
-                metrics = body.get("q4");
-                break;
-            case 5:
-                redir = "http://localhost:18080/q6";
-                metrics = body.get("q5");    
-                break;
-            case 6:
-                redir = "http://localhost:18080/q7";
-                metrics = body.get("q6");    
-                break;
-            case 7:
-                redir = "http://localhost:18080/q8";
-                metrics = body.get("q7"); 
-                break;
-            case 8:
-                redir = "http://localhost:18080/q9";
-                metrics = body.get("q8"); 
-                break;
-            case 9:
-                redir = "http://localhost:18080/q10";
-                metrics = body.get("q9"); 
-                break;
-            case 10:
-                redir = "http://localhost:18080/results";
-                metrics = body.get("q10"); 
-            case 0:
-                //time for some strange return logic so that we don't have to duplicate all the store response lines for each question page
-                std::cout << "";
-
+            //find the shoe based on name
+            std::string name = body.get("name");
+            for (const auto& shoe : shoes) {
+                if (shoe.contains("name") && shoe["name"] == name) {
+                    session.set("name", shoe["name"]);
+                    session.set("Heel stack", shoe["Heel stack"]);
+                    session.set("Forefoot stack", shoe["Forefoot stack"]);
+                    session.set("Drop", shoe["Drop"]);
+                    session.set("Midsole softness", shoe["Midsole softness"]);
+                    session.set("Midsole softness in cold", shoe["Midsole softness in cold"]);
+                    session.set("Midsole softness in cold (%)", shoe["Midsole softness in cold (%)"]);
+                    session.set("Insole thickness", shoe["Insole thickness"]);
+                    session.set("Size", shoe["Size"]);
+                    session.set("Toebox width - widest part (new method)", shoe["Toebox width - widest part (new method)"]);
+                    session.set("Toebox width - widest part (old method)", shoe["Toebox width - widest part (new method)"]);
+                    session.set("Toebox width - big toe (new method)", shoe["Toebox width - big toe (new method)"]);
+                    session.set("Toebox width - big toe (old method)", shoe["Toebox width - big toe (old method)"]);
+                    session.set("Toebox height", shoe["Toebox height"]);
+                    session.set("Torsional rigidity", shoe["Torsional rigidity"]);
+                    session.set("Heel counter stiffness", shoe["Heel counter stiffness"]);
+                    session.set("Midsole width - forefoot": "122.3 mm",
+        "Midsole width - heel": "97.6 mm",
+        "Flexibility / Stiffness (new method)": "11.2N",
+        "Flexibility / Stiffness (old method)": "19.1N",
+        "Stiffness in cold": "21.9N",
+        "Stiffness in cold (%)": "15%",
+        "Weight": "8.96 oz (254g)",
+        "Breathability": "3",
+        "Toebox durability": "1",
+        "Heel padding durability": "3",
+        "Outsole hardness": "78.0 HC",
+        "Outsole durability": "0.9 mm",
+        "Outsole thickness": "3.3 mm",
+        "Price": "$140",
+        "Reflective elements": "Yes",
+        "Tongue padding": "5.0 mm",
+        "Tongue: gusset type": "Both sides (semi)",
+        "Heel tab": "Finger loop",
+        "Removable insole": "Yes"
+                }
+            }
+            session.set()
         }
-
+        else if(q < questions){
+            metrics = body.get("q" + std::to_string(q));
+            redir = "http://localhost:18080/q" + std::to_string(q+1);
+        }else {
+            metrics = body.get("q" + std::to_string(q));
+            redir = "http://localhost:18080/results";
+        }
         storeResponses(session, metrics);
         auto keys = session.keys();
         res.set_header("Location", redir);
