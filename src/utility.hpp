@@ -7,8 +7,10 @@
 #include <vector>
 #include <regex>
 
+//some utility functions to get values from the string values of the json shoe files
 class Utility {
     public:
+        //remove the unit labels, etc from the strings and make them numbers
         static float convert_to_number(std::string str)
         {
             //start at the back and remove once we hit first number
@@ -28,16 +30,16 @@ class Utility {
             return -1;
         }
         
-        //classic splitting of the 
+        //splitting a list of | elements | in json value 
         static std::vector<std::string> convert_to_list(std::string str, char limit)
         {
-            //list
+
             std::vector<std::string> l;
             std::string el;
             std::stringstream ss(str);
             while(std::getline(ss, el, limit))
             {
-                //trim the strings
+                //trim the begining and end of strings
                 el.erase(el.begin(), std::find_if(el.begin(), el.end(), [](char c) {
                     return c != ' ';
                 }));
@@ -49,6 +51,7 @@ class Utility {
             return l;
         }
 
+        //use regex to grab the digits and ignore units
         static float parseWeight(std::string str)
         {
             std::regex pattern("R(\\d+(?:\\.\\d+)?)");
@@ -57,7 +60,6 @@ class Utility {
             {
                 return std::stof(match[1]);
             }
-
             //error
             return -1;
         }

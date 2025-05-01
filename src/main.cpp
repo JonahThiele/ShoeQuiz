@@ -1,7 +1,6 @@
 #include "crow.h"
 #include "crow/middlewares/session.h"
 #include "crow/middlewares/cors.h"
-//this might need to be changed for cmake builds
 #include "../includes/inja.hpp"
 #include <fstream>
 #include <iostream>
@@ -9,20 +8,20 @@
 #include <string>
 #include <sstream>
 #include <filesystem>
-#include "shoeTree.hpp"
-#include "utility.hpp"
-
-//some annoying gets from the query string request 
 #include <bits/stdc++.h>
+#include "shoeTree.hpp"
+#include "utility.hpp" 
 
 
+
+//create dynamic routes based on the q#.json files
 void register_question_routes(crow::App<crow::CookieParser, crow::SessionMiddleware<crow::InMemoryStore> >& app, inja::Environment& env, inja::json& vars, std::string questions_dir)
 {
-    std::regex question_pattern(R"(q(\d+)\.json)");
+    std::regex question_pattern(R"(q(\d+)\.json)"); //select q#.json file
     
     for(auto file : std::filesystem::directory_iterator(questions_dir))
     {
-        // it hits a folder a link etc
+        // it hits a folder a link etc, skip
         if(!file.is_regular_file()) continue;
         std::string filename = file.path().filename().string();
         std::smatch match;
@@ -31,6 +30,7 @@ void register_question_routes(crow::App<crow::CookieParser, crow::SessionMiddlew
             std::string route_path = "/q" + question_num;
             std::string full_path = file.path().string();
             
+            //add the route and render the q#.json file if the route is called
             app.route_dynamic(route_path)
             .methods(crow::HTTPMethod::GET)
             ([&, full_path](const crow::request& req, crow::response& res){
@@ -43,7 +43,8 @@ void register_question_routes(crow::App<crow::CookieParser, crow::SessionMiddlew
       
 }
 
-//I have no idea what the get_context returns so I am using auto
+//probably should not be using auto
+//this grabs the selected response and takes the meterics it effects and stores it into the session variables
 void storeResponses(auto &store, std::string metrics)
 {
     //how are we going to grab both the metric name and value
@@ -54,17 +55,20 @@ void storeResponses(auto &store, std::string metrics)
     std::vector<std::string> metric_titles;
     std::vector<std::string> metric_values;
 
+    //break the meteric string into names and  values of the metrics that are being used
     while(std::getline(metrics_ss, values, ':'))
     {
         parsed_metrics.push_back(values);
     }
     values.clear();
+    //split the names of the metrics
     std::stringstream metric_titles_ss(parsed_metrics[0]);
     while(std::getline(metric_titles_ss, values, ','))
     {
         metric_titles.push_back(values);
     }
     values.clear();
+    //split the names of the values for the metrics
     std::stringstream metric_values_ss(parsed_metrics[1]);
     while(std::getline(metric_values_ss, values, ','))
     {
@@ -72,7 +76,7 @@ void storeResponses(auto &store, std::string metrics)
     }
     values.clear();
 
-    //there probaly should be some error handling to make sure the vectors match up in lenght or I should have used a simple map
+    // load the metrics into the session store
     for( long unsigned int i = 0; i < metric_titles.size(); i++)
     {
         store.set(metric_titles[i], metric_values[i]);
@@ -83,14 +87,11 @@ void storeResponses(auto &store, std::string metrics)
 
 int main()
 {
-    //fingers crossed
+    //load the KD-tree of Shoes from the shoes json
     ShoeTree tree("../scraping/shoes.json");
     //tree.print();
-    std::fstream shoes_file("../scraping/shoes.json");
-    nlohmann::json::json shoes;
-    shoes_file >> shoes;
 
-    //define app to handle all the session data
+    //define app to handle all the session data via cookies
     using Session = crow::SessionMiddleware<crow::InMemoryStore>;
     crow::App<crow::CookieParser, Session> app{Session{
         crow::CookieParser::Cookie("session")
@@ -105,39 +106,28 @@ int main()
 
     inja::Environment env;
     inja::json vars;
-    //set the port, set the app to run on multiple threads, and run the app
 
-    //initial home question
+    //initial home splash screen
     CROW_ROUTE(app, "/")([&](const crow::request& req){
         inja::Template temp = env.parse_template("../templates/index.html");
         std::string result = env.render(temp, vars);
-
-        //set up the session 
-        auto& session = app.get_context<Session>(req);
-
         return crow::response{result};
     });
 
-    //create some route to serve the css, we should make this more clean and extendable later
+    //create some route to serve the css
     CROW_ROUTE(app, "/static/style.css")([&]{
         inja::Template temp = env.parse_template("../templates/style.css");
         std::string result = env.render(temp, vars);
         return crow::response{result};
     });
 
-    //use a template to handle the types
+    //set up the dynamic question routes
     register_question_routes(app, env, vars, "../data");
 
-    CROW_ROUTE(app, "/initialshoe").methods(crow::HTTPMethod::GET)([&](const crow::request &req){
-        //get the session data
-        std::string result = env.render_file_with_json_file("../templates/chooseshoe.html", "../scraping/all_shoes.json");
-        return crow::response{result};
-    });
-
-    //just process all the data in this step aggregated from all the question pages
+    //show the perfect shoe for the user
     CROW_ROUTE(app, "/results")([&](const crow::request &req){
         
-        //create the perfect shoe from all the stored answers of the questions in the session data
+        //get the session data and dump it into a new shoe object
         auto& session = app.get_context<Session>(req);
 
         float weight =  Utility::parseWeight(session.get<std::string>("Weight", "None"));
@@ -185,7 +175,7 @@ int main()
         bool heel_tab = (session.get<std::string>("Heel tab", "None") == "None")? false : true;
         bool removable_insole = (session.get<std::string>("Removeable insole", "None") == "Yes") ? true : false;
 
-
+        //create a new shoe object to run the search on
         Shoe perfect_shoe = Shoe("perfect_shoe", heel_stack, forefoot_stack, 
             midsole_softness, midsole_softness_in_cold, 
             midsole_softness_in_cold_per, insole_thickness, 
@@ -202,9 +192,10 @@ int main()
             forefoot_height, arch_type, brand, drop, secondary_foam_softness,
             heel_padding_durability, outsole_durability);
 
-        //get the list of shoes back 
+        //get the list of shoes back in order from closest
+        //run knearestneighbors on the KD-Tree of running shoes
         std::vector<std::shared_ptr<Shoe>> results = tree.kNearestNeighbors(std::make_shared<Shoe>(perfect_shoe), ATTR);
-        vars["shoes"] = nlohmann::json::array();
+        vars["shoes"] = nlohmann::json::array(); //json to use with rendering results
         for(std::shared_ptr<Shoe> s : results)
         {
             nlohmann::json shoe;
@@ -215,81 +206,34 @@ int main()
 
         //load the vector into a map to parse the results
         inja::Template temp = env.parse_template("../templates/results.html");
-        std::string result = env.render(temp, vars); // this should brick that is okay
+        std::string result = env.render(temp, vars);
         return crow::response{result};
     });
 
+    //after each question store the results into session data
     CROW_ROUTE(app, "/store").methods(crow::HTTPMethod::POST)([&](const crow::request &req){
         //get the session data
         auto& session = app.get_context<Session>(req);
-
-        //return the amount of answers and map them to the shoe class
 
         auto body = req.get_body_params();
         long int q = std::strtol(body.get("question_num"),NULL, 10);
         long int questions = std::strtol(body.get("questions"), NULL, 10);
         
         std::string metrics;
-
-        //this works but causes the screen to flash a bit when the redirect doesn't go immediately, Idk how to fix that
         crow::response res;
         std::string redir;
-        //later once this is working clean this up because it is unnecessary and ugly
-        //calculate what is the largest number of shoe
-        if(q == 0)
-        {
-            //find the shoe based on name
-            std::string name = body.get("name");
-            for (const auto& shoe : shoes) {
-                if (shoe.contains("name") && shoe["name"] == name) {
-                    session.set("name", shoe["name"]);
-                    session.set("Heel stack", shoe["Heel stack"]);
-                    session.set("Forefoot stack", shoe["Forefoot stack"]);
-                    session.set("Drop", shoe["Drop"]);
-                    session.set("Midsole softness", shoe["Midsole softness"]);
-                    session.set("Midsole softness in cold", shoe["Midsole softness in cold"]);
-                    session.set("Midsole softness in cold (%)", shoe["Midsole softness in cold (%)"]);
-                    session.set("Insole thickness", shoe["Insole thickness"]);
-                    session.set("Size", shoe["Size"]);
-                    session.set("Toebox width - widest part (new method)", shoe["Toebox width - widest part (new method)"]);
-                    session.set("Toebox width - widest part (old method)", shoe["Toebox width - widest part (new method)"]);
-                    session.set("Toebox width - big toe (new method)", shoe["Toebox width - big toe (new method)"]);
-                    session.set("Toebox width - big toe (old method)", shoe["Toebox width - big toe (old method)"]);
-                    session.set("Toebox height", shoe["Toebox height"]);
-                    session.set("Torsional rigidity", shoe["Torsional rigidity"]);
-                    session.set("Heel counter stiffness", shoe["Heel counter stiffness"]);
-                    session.set("Midsole width - forefoot": "122.3 mm",
-        "Midsole width - heel": "97.6 mm",
-        "Flexibility / Stiffness (new method)": "11.2N",
-        "Flexibility / Stiffness (old method)": "19.1N",
-        "Stiffness in cold": "21.9N",
-        "Stiffness in cold (%)": "15%",
-        "Weight": "8.96 oz (254g)",
-        "Breathability": "3",
-        "Toebox durability": "1",
-        "Heel padding durability": "3",
-        "Outsole hardness": "78.0 HC",
-        "Outsole durability": "0.9 mm",
-        "Outsole thickness": "3.3 mm",
-        "Price": "$140",
-        "Reflective elements": "Yes",
-        "Tongue padding": "5.0 mm",
-        "Tongue: gusset type": "Both sides (semi)",
-        "Heel tab": "Finger loop",
-        "Removable insole": "Yes"
-                }
-            }
-            session.set()
-        }
-        else if(q < questions){
+
+        //figure out what next question to redirect to or just to the results page
+        if(q < questions){
             metrics = body.get("q" + std::to_string(q));
             redir = "http://localhost:18080/q" + std::to_string(q+1);
         }else {
             metrics = body.get("q" + std::to_string(q));
             redir = "http://localhost:18080/results";
         }
+        //store the response string into the session data
         storeResponses(session, metrics);
-        auto keys = session.keys();
+        //go to the next question
         res.set_header("Location", redir);
         res.code = 302; 
         return res;

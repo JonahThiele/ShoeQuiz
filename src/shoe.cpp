@@ -1,5 +1,6 @@
 #include "shoe.hpp"
 
+//these are just some simple hashmaps to map the string in the json files to number values
 std::map<std::string, Size> SizeLabels = {
     {"True to size", TRUE_TO_SIZE},
     {"Slightly small", SLIGHTLY_SMALL},

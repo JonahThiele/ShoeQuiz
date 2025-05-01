@@ -5,8 +5,7 @@
 #include "../includes/json.hpp"
 #include <regex>
 
-//helper function for the knn nearest neighbor searchs
-//I wonder if this can be speed up with 
+//helper function for the knn nearest neighbor searchs, get distance between two shoes based on metrics
 float ShoeTree::distance_squared(std::array<float, ATTR> a, std::array<float, ATTR> b)
 {
     float dist = 0;
@@ -18,18 +17,21 @@ float ShoeTree::distance_squared(std::array<float, ATTR> a, std::array<float, AT
     return dist;
 }
 
-//make sure that the priority queue actually acts like a priority queue
 void ShoeTree::kNearestRecursive(std::shared_ptr<Shoe> node, std::shared_ptr<Shoe> perfect_shoe,
     int depth, int k, std::priority_queue<std::pair<float, std::shared_ptr<Shoe>>> &max_heap)
 {
+    //check if node is not leaf
     if(!node)
         return;
 
+    //get distance from the shoe we want and the shoe in the tree
     float dist = distance_squared(perfect_shoe->points, node->points);
 
+    //if we can have k suggestions just add to heap
     if(max_heap.size() < static_cast<size_t>(k))
     {
         max_heap.emplace(dist, node);
+    //if we have max suggestions remove the frist one and add it instead
     } else if (dist < max_heap.top().first)
     {
         max_heap.pop();
@@ -37,20 +39,24 @@ void ShoeTree::kNearestRecursive(std::shared_ptr<Shoe> node, std::shared_ptr<Sho
     }
 
     int cd = depth % ATTR;
+    //check if the right or left branch is closer 
     bool goLeft = perfect_shoe->points[cd] < node->points[cd];
     auto next = goLeft ? node->left : node->right;
     auto other = goLeft ? node->right : node->left;
 
+    //continue with the branch chosen
     kNearestRecursive(next, perfect_shoe, depth + 1, k, max_heap);
 
-    //check other side if it is closer
+    //check other side is actually closer later on
     float axis_diff = perfect_shoe->points[cd] - node->points[cd];
     if(max_heap.size() < static_cast<size_t>(k) || axis_diff * axis_diff < max_heap.top().first)
-    {
+    {   
+        //continue down that path if it is
         kNearestRecursive(other, perfect_shoe, depth + 1, k, max_heap);
     }
 }
 
+//store it in a vector and reverse it so it has the closest matches first
 std::vector<std::shared_ptr<Shoe>> ShoeTree::kNearestNeighbors(std::shared_ptr<Shoe> perfect_shoe, int k)
 {
     std::priority_queue<std::pair<float, std::shared_ptr<Shoe>>> max_heap;
@@ -67,7 +73,7 @@ std::vector<std::shared_ptr<Shoe>> ShoeTree::kNearestNeighbors(std::shared_ptr<S
     return result;
 }
 
-
+//use this to build the tree in constructor
 std::shared_ptr<Shoe> ShoeTree::insertRecursive(std::shared_ptr<Shoe> node, std::shared_ptr<Shoe> shoe, int depth)
 {
             //its  in a new spot that is can be added to
@@ -123,29 +129,20 @@ ShoeTree::ShoeTree(std::string filename){
         return;
     }
 
+    //load the json/hashmap structure
     nlohmann::json shoes_json;
     file >> shoes_json;
 
     for(const nlohmann::json &jshoe : shoes_json)
     {
-
+        //convert all the json map variables into something that can be places into a shoe 
         std::string name = jshoe["name"];
         bool terrain = (jshoe.value("Terrain:", "None") == "Road")? true : false;
         bool arch_support = (jshoe.value("Arch support:", "None") == "Neutral")? true : false;
         float heel_height = Utility::convert_to_number(jshoe.value("Heel height:", "None"));
         float forefoot_height = Utility::convert_to_number(jshoe.value("Forefoot height:", "None"));
-        //this is needed but I have no idea how I would generate a unique number from this
-        //std::vector<std::string> pronation = Utility::convert_to_list(jshoe.value("Pronation:", "None"), '|'); // "Neutral Pronation  |  Supination  |  Underpronation",
         bool arch_type = (jshoe.value("Arch type:", "None") == "High arch")? true : false;
-        //this is also needed but I have no idea how I would generate a unique number from this, or multiple points would need to be set
-        //std::vector<std::string> strike_pattern = Utility::convert_to_list(jshoe.value("Strike Pattern:", "None"), '|'); //"Heel strike  |  Forefoot/Midfoot strike",
-        //this is also needed but I have no idea how I would generate a unique identifier/number from this
-        //std::vector<std::string> season = Utility::convert_to_list(jshoe.value("Season:", "None"), '|'); //"All seasons",
         std::string brand = jshoe.value("BRAND Brand:", "None");
-        //this could be useful but I have no idea how to generate a unique number from this
-        //std::vector<std::string> type = Utility::convert_to_list(jshoe.value("Type:", "None"), '|'); // "Maximalist  |  Lightweight",
-        //this could also be a really useful but I have no idea how it make it a discrete data point
-        //std::vector<std::string> pace = Utility::convert_to_list(jshoe.value("Pace:", "None"), ','); // "Tempo, Competition",
         float heel_stack = Utility::convert_to_number(jshoe.value("Heel stack", "None"));
         float forefoot_stack = Utility::convert_to_number(jshoe.value("Forefoot stack", "None"));
         float drop = Utility::convert_to_number(jshoe.value("Drop", "None"));
@@ -172,15 +169,16 @@ ShoeTree::ShoeTree(std::string filename){
         float outsole_hardness = Utility::convert_to_number(jshoe.value("Outsole hardness", "None"));
         float outsole_durability = Utility::convert_to_number(jshoe.value("Outsole durability", "None"));
         float outsole_thickness = Utility::convert_to_number(jshoe.value("Outsole thickness", "None"));
+        //handle converting the price into a number
         std::string price_str = jshoe.value("Price", "None");
         price_str.erase(0,1);
         float price = Utility::convert_to_number(price_str);
         bool reflective_elements = (jshoe.value("Reflective elements", "None") == "Yes") ? true : false;
         float tongue_padding = Utility::convert_to_number(jshoe.value("Tongue padding", "None"));
-        // probaly disregard this as well "Tongue: gusset type": "Both sides (semi)",
         bool heel_tab = (jshoe.value("Heel tab", "None") == "None")? false : true;
         bool removable_insole = (jshoe.value("Removeable insole", "None") == "Yes") ? true : false;
         
+        //create the shoe object from the json values
         Shoe shoe = Shoe(name, heel_stack, forefoot_stack, 
             midsole_softness, midsole_softness_in_cold, 
             midsole_softness_in_cold_per, insole_thickness, 

@@ -5,7 +5,7 @@
 #include <memory>
 #define ATTR 37
 
-//these were the only sizes I saw after briefly skimming the file 
+//convert the different options into a integer number
 enum Size {
     TRUE_TO_SIZE,
     SLIGHTLY_SMALL,
@@ -14,6 +14,7 @@ enum Size {
     HALF_SIZE_LARGE
 };
 
+//convert the brands into a different integer number
 enum Brand {
     ADIDAS,
     ALLBIRDS,
@@ -44,11 +45,11 @@ enum Brand {
     UNDER_ARMOR,
     XERO_SHOES
 };
-
+//use these to map the string of the json file to the enum representation
 extern std::map<std::string, Brand> BrandLabels;
 extern std::map<std::string, Size> SizeLabels;
 
-//this is functionaly a node for the KD tree 
+//this is functionaly a node for the KD tree, purely a data class
 class Shoe {
         public:
             std::string name;
@@ -130,6 +131,7 @@ class Shoe {
             float outsole_durability)
             {
 
+                //load in the attributes into the points array to use for the KD-tree algorithm
                 this->name = name;
                 points[0] = heel_stack;
                 points[1] = forefoot_stack;
